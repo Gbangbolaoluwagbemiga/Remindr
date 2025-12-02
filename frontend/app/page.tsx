@@ -37,6 +37,7 @@ import {
   Bell,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useReminderNotifications } from "@/hooks/useReminderNotifications";
 
 interface Reminder {
   id: bigint;
@@ -187,6 +188,10 @@ export default function Home() {
     return Number(timestamp) * 1000 < Date.now();
   };
 
+  // Notification system
+  const { permission, requestPermission, isSupported } =
+    useReminderNotifications(reminders, isConnected);
+
   const activeReminders =
     reminders?.filter((r) => r.exists && !r.isCompleted) || [];
   const completedReminders =
@@ -321,6 +326,40 @@ export default function Home() {
 
         {isConnected && (
           <>
+            {/* Notification Permission Banner */}
+            {isSupported && permission !== "granted" && (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6"
+              >
+                <Card className="bg-yellow-500/10 dark:bg-yellow-500/10 backdrop-blur-lg border-yellow-500/30 dark:border-yellow-500/30 shadow-lg">
+                  <CardContent className="p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Bell className="w-5 h-5 text-yellow-500" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          Enable notifications to get alerted when reminders are
+                          due
+                        </p>
+                        <p className="text-xs text-gray-600 dark:text-white/60">
+                          You'll receive browser notifications even when the tab
+                          is closed
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={requestPermission}
+                      size="sm"
+                      className="bg-yellow-500 hover:bg-yellow-600 text-white"
+                    >
+                      Enable
+                    </Button>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+
             {/* Stats Cards */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -495,7 +534,7 @@ export default function Home() {
                           Cancel
                         </Button>
                       )}
-                    </div>
+        </div>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -612,7 +651,7 @@ export default function Home() {
             </div>
           </>
         )}
-      </div>
+        </div>
     </div>
   );
 }
@@ -649,6 +688,7 @@ function ReminderCard({
 
   return (
     <motion.div
+      id={`reminder-${reminder.id}`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.9 }}
