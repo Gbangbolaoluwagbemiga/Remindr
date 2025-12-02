@@ -11,6 +11,25 @@ const nextConfig: NextConfig = {
       ...config.resolve.alias,
     };
 
+    // Ensure proper module resolution
+    config.resolve.extensions = [
+      ".js",
+      ".jsx",
+      ".mjs",
+      ".ts",
+      ".tsx",
+      ".json",
+      ...(config.resolve.extensions || []),
+    ];
+
+    // Ignore test files from node_modules
+    config.module = config.module || {};
+    config.module.rules = config.module.rules || [];
+    config.module.rules.push({
+      test: /node_modules.*\.(test|spec)\.(js|ts|mjs)$/,
+      use: "ignore-loader",
+    });
+
     // Ignore patterns for browser
     if (!isServer) {
       config.resolve.fallback = {
