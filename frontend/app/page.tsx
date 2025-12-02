@@ -36,6 +36,7 @@ import {
   Wallet,
   Bell,
 } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 interface Reminder {
   id: bigint;
@@ -194,7 +195,7 @@ export default function Home() {
   const overdueReminders = activeReminders.filter((r) => isPast(r.timestamp));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 relative overflow-hidden">
+    <div className="min-h-screen dark:bg-gradient-to-br dark:from-indigo-950 dark:via-purple-950 dark:to-teal-800 bg-gradient-to-br from-indigo-50 via-purple-50 to-cyan-100 relative overflow-hidden transition-colors duration-500">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
@@ -210,7 +211,7 @@ export default function Home() {
           }}
         />
         <motion.div
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"
+          className="absolute -bottom-40 -left-40 w-80 h-80 dark:bg-cyan-500 bg-cyan-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"
           animate={{
             x: [0, -100, 0],
             y: [0, -100, 0],
@@ -222,7 +223,7 @@ export default function Home() {
           }}
         />
         <motion.div
-          className="absolute top-1/2 left-1/2 w-80 h-80 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"
+          className="absolute top-1/2 left-1/2 w-80 h-80 dark:bg-teal-500 bg-teal-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"
           animate={{
             x: [0, 50, 0],
             y: [0, -50, 0],
@@ -236,6 +237,16 @@ export default function Home() {
       </div>
 
       <div className="relative z-10 container mx-auto px-4 py-8 max-w-6xl">
+        {/* Theme Toggle - Top Right */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+          className="absolute top-4 right-4 z-20"
+        >
+          <ThemeToggle />
+        </motion.div>
+
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -260,7 +271,7 @@ export default function Home() {
               <Sparkles className="w-8 h-8 text-yellow-400" />
             </motion.div>
           </div>
-          <p className="text-xl text-white/80 mb-6">
+          <p className="text-xl text-gray-700 dark:text-white/80 mb-6">
             Never miss a governance vote, token unlock, or important date again
           </p>
 
@@ -272,7 +283,7 @@ export default function Home() {
               transition={{ type: "spring", stiffness: 200 }}
               className="flex flex-col items-center gap-4"
             >
-              <div className="flex items-center gap-2 text-white/60 mb-2">
+              <div className="flex items-center gap-2 dark:text-white/60 text-gray-600 mb-2">
                 <Wallet className="w-5 h-5" />
                 <span>Connect your wallet to get started</span>
               </div>
@@ -293,14 +304,14 @@ export default function Home() {
                 <div className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse" />
                 Connected
               </Badge>
-              <span className="text-white/60 font-mono text-sm">
+              <span className="dark:text-white/60 text-gray-600 font-mono text-sm">
                 {address?.slice(0, 6)}...{address?.slice(-4)}
               </span>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => open({ view: "Account" })}
-                className="text-white/80 hover:text-white"
+                className="dark:text-white/80 dark:hover:text-white text-gray-700 hover:text-gray-900"
               >
                 Manage
               </Button>
