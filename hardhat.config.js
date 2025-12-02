@@ -44,6 +44,9 @@ module.exports = {
       timeout: 60000,
     },
   },
+  sourcify: {
+    enabled: true,
+  },
   etherscan: {
     apiKey: {
       base: process.env.BASE_ETHERSCAN_API_KEY || "",
@@ -57,7 +60,7 @@ module.exports = {
         network: "base",
         chainId: 8453,
         urls: {
-          apiURL: "https://api.basescan.org/api/v2",
+          apiURL: "https://api.basescan.org/api",
           browserURL: "https://basescan.org",
         },
       },
