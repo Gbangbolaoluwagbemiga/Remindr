@@ -1,128 +1,471 @@
-# Remindr 📅
+# Remindr 🔔
 
-On-chain reminder system for wallet users. Never miss a governance vote, token unlock, or important date again.
+> **On-chain reminder system for wallet users** - Never miss a governance vote, token unlock, or important date again.
 
-## Features
+Remindr is a decentralized reminder application that stores your reminders on-chain (Base blockchain) and notifies you when it's time. Built with React, Next.js, and Solidity for the Web3 ecosystem.
 
-- ✅ Create reminders tied to your wallet address
-- ✅ Update or delete reminders anytime
-- ✅ Mark reminders as completed
-- ✅ Query pending reminders (not yet due)
-- ✅ Gas-optimized and efficient
-- ✅ Deployable on Base and Celo networks
+![Remindr](https://img.shields.io/badge/Status-Live-brightgreen)
+![Solidity](https://img.shields.io/badge/Solidity-0.8.20-blue)
+![Next.js](https://img.shields.io/badge/Next.js-16.0.6-black)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
-## Contract Functions
+---
 
-### Write Functions
+## ✨ Features
 
-- `createReminder(title, description, timestamp)` - Create a new reminder
-- `updateReminder(id, title, description, timestamp)` - Update existing reminder
-- `completeReminder(id)` - Mark reminder as completed
-- `deleteReminder(id)` - Delete a reminder
+### Smart Contract
 
-### Read Functions
+- ✅ **On-chain Storage** - Reminders stored permanently on Base blockchain
+- ✅ **Gas Optimized** - Efficient smart contract design
+- ✅ **Full CRUD Operations** - Create, read, update, delete, and complete reminders
+- ✅ **Multi-chain Support** - Deployable on Base and Celo networks
+- ✅ **Event Logging** - Comprehensive events for all operations
 
-- `getReminder(id)` - Get a specific reminder by ID
-- `getUserReminders(user)` - Get all reminders for a user
-- `getPendingReminders(user)` - Get reminders that haven't been completed and aren't due yet
-- `getUserReminderIds(user)` - Get all reminder IDs for a user
-- `getTotalReminders()` - Get total count of reminders created
+### Frontend Application
 
-## Setup
+- 🎨 **Beautiful UI** - Modern, responsive design with glassmorphism effects
+- 🌓 **Theme Toggle** - Seamless light/dark mode switching
+- 🔔 **Smart Notifications** - Browser notifications + in-app toast alerts
+- 💼 **Wallet Integration** - Reown (WalletConnect) AppKit for easy wallet connection
+- ⚡ **Real-time Updates** - Automatic reminder sync with blockchain
+- 📱 **Responsive Design** - Works perfectly on desktop and mobile
+- 🎭 **Animated UI** - Smooth animations powered by Framer Motion
+- 🎯 **Visual Highlights** - Auto-scroll and highlight reminders when due
 
-1. Install dependencies:
+---
+
+## 🚀 Live Demo
+
+- **Frontend**: Coming soon
+- **Contract (Base Mainnet)**: [`0xfe4a4d81E4f0F17CA959b07D39Ab18493efc4B0C`](https://basescan.org/address/0xfe4a4d81E4f0F17CA959b07D39Ab18493efc4B0C)
+- **Contract (Base Sepolia)**: [`0x8Eec6d38AB8fd67A13787C7dF79B953d4FD1810C`](https://sepolia.basescan.org/address/0x8Eec6d38AB8fd67A13787C7dF79B953d4FD1810C)
+
+---
+
+## 🛠️ Tech Stack
+
+### Smart Contract
+
+- **Solidity** ^0.8.20
+- **Hardhat** - Development environment
+- **Ethers.js** - Blockchain interactions
+
+### Frontend
+
+- **Next.js 16** - React framework with Webpack
+- **TypeScript** - Type-safe development
+- **Wagmi** + **Viem** - Ethereum interaction library
+- **Reown AppKit** - Wallet connection (WalletConnect)
+- **Tailwind CSS** - Utility-first styling
+- **shadcn/ui** - Beautiful UI components
+- **Framer Motion** - Smooth animations
+- **Sonner** - Toast notifications
+- **next-themes** - Theme management
+- **date-fns** - Date formatting
+
+---
+
+## 📦 Installation & Setup
+
+### Prerequisites
+
+- Node.js 18+ and npm
+- A wallet with Base Sepolia testnet ETH (for testing)
+- BaseScan API key (optional, for verification)
+
+### 1. Clone the Repository
+
+```bash
+git clone <your-repo-url>
+cd Base
+```
+
+### 2. Install Contract Dependencies
 
 ```bash
 npm install
 ```
 
-2. Create a `.env` file based on `.env.example`:
+### 3. Configure Environment Variables
 
-```bash
-cp .env.example .env
-```
-
-3. Add your private key and RPC URLs to `.env`:
+Create a `.env` file in the root directory:
 
 ```env
+# Private key for deployment (never commit this!)
 PRIVATE_KEY=your_private_key_here
+
+# RPC URLs
 BASE_SEPOLIA_RPC_URL=https://sepolia.base.org
-CELO_ALFAJORES_RPC_URL=https://alfajores-forno.celo-testnet.org
+BASE_MAINNET_RPC_URL=https://mainnet.base.org
+
+# Optional: For contract verification
+BASE_ETHERSCAN_API_KEY=your_basescan_api_key
+
+# Optional: For frontend (Reown/WalletConnect)
+NEXT_PUBLIC_REOWN_ID=your_reown_project_id
 ```
 
-## Compile
+### 4. Install Frontend Dependencies
+
+```bash
+cd frontend
+npm install
+```
+
+---
+
+## 🏗️ Development
+
+### Compile Smart Contract
 
 ```bash
 npm run compile
 ```
 
-## Deploy
+### Run Tests
 
-### Base Testnet (Base Sepolia)
+```bash
+npm run test
+```
+
+### Start Frontend Development Server
+
+```bash
+cd frontend
+npm run dev
+```
+
+Visit `http://localhost:3000` to see the app.
+
+---
+
+## 🚀 Deployment
+
+### Deploy Smart Contract
+
+#### Base Sepolia (Testnet)
 
 ```bash
 npm run deploy:base:testnet
 ```
 
-### Base Mainnet
+#### Base Mainnet
 
 ```bash
 npm run deploy:base:mainnet
 ```
 
-### Celo Testnet (Alfajores)
+#### Celo Alfajores (Testnet)
 
 ```bash
 npm run deploy:celo:testnet
 ```
 
-### Celo Mainnet
+#### Celo Mainnet
 
 ```bash
 npm run deploy:celo:mainnet
 ```
 
-## Deployed Contracts
+### Verify Contract
 
-### Base Mainnet 🚀
-
-- **Contract Address**: `0xfe4a4d81E4f0F17CA959b07D39Ab18493efc4B0C`
-- **Explorer**: https://basescan.org/address/0xfe4a4d81E4f0F17CA959b07D39Ab18493efc4B0C
-- **Status**: ✅ Deployed (Manual verification recommended - see MANUAL_VERIFY_MAINNET.md)
-
-### Base Sepolia Testnet
-
-- **Contract Address**: `0x8Eec6d38AB8fd67A13787C7dF79B953d4FD1810C`
-- **Explorer**: https://sepolia.basescan.org/address/0x8Eec6d38AB8fd67A13787C7dF79B953d4FD1810C
-
-## Verify Contract
-
-To verify the contract, you need a BaseScan API key:
-
-1. Get a free API key from [BaseScan](https://basescan.org/) (create account → API Keys)
-2. Add to your `.env` file: `BASE_ETHERSCAN_API_KEY=your_api_key_here`
-3. Run verification:
+After deployment, verify on BaseScan:
 
 ```bash
 # Base Sepolia
-npx hardhat verify --network baseSepolia 0x8Eec6d38AB8fd67A13787C7dF79B953d4FD1810C
+npm run verify:base:testnet
 
 # Base Mainnet
-npx hardhat verify --network base <CONTRACT_ADDRESS>
-
-# Celo
-npx hardhat verify --network celo <CONTRACT_ADDRESS>
+npm run verify:base:mainnet
 ```
 
-**Note**: The Remindr contract has no constructor parameters, so verification should be straightforward once the API key is set.
+Or manually:
 
-## Network Information
+```bash
+npx hardhat verify --network baseSepolia <CONTRACT_ADDRESS>
+```
 
-- **Base Mainnet**: Chain ID 8453
-- **Base Sepolia**: Chain ID 84532
-- **Celo Mainnet**: Chain ID 42220
-- **Celo Alfajores**: Chain ID 44787
+**Note**: The Remindr contract has no constructor parameters, so verification is straightforward.
 
-## License
+### Deploy Frontend
 
-MIT
+Build the production version:
+
+```bash
+cd frontend
+npm run build
+```
+
+Then deploy to Vercel, Netlify, or your preferred hosting:
+
+```bash
+npm start
+```
+
+---
+
+## 📋 Smart Contract API
+
+### Write Functions
+
+#### `createReminder(title, description, timestamp)`
+
+Create a new reminder on-chain.
+
+- `title` (string): Reminder title
+- `description` (string): Optional description
+- `timestamp` (uint256): Unix timestamp when reminder should trigger
+
+**Events**: `ReminderCreated`
+
+#### `updateReminder(id, title, description, timestamp)`
+
+Update an existing reminder (only owner can update).
+
+**Events**: `ReminderUpdated`
+
+#### `completeReminder(id)`
+
+Mark a reminder as completed.
+
+**Events**: `ReminderCompleted`
+
+#### `deleteReminder(id)`
+
+Delete a reminder (only owner can delete).
+
+**Events**: `ReminderDeleted`
+
+### Read Functions
+
+#### `getReminder(id)`
+
+Get a specific reminder by ID.
+
+**Returns**: `Reminder` struct
+
+#### `getUserReminders(user)`
+
+Get all reminders for a specific user address.
+
+**Returns**: Array of `Reminder` structs
+
+#### `getPendingReminders(user)`
+
+Get reminders that haven't been completed and aren't due yet.
+
+**Returns**: Array of `Reminder` structs
+
+#### `getUserReminderIds(user)`
+
+Get all reminder IDs for a user.
+
+**Returns**: Array of `uint256`
+
+#### `getTotalReminders()`
+
+Get total count of all reminders created.
+
+**Returns**: `uint256`
+
+### Events
+
+- `ReminderCreated(uint256 indexed id, address indexed owner, string title, uint256 timestamp)`
+- `ReminderUpdated(uint256 indexed id, address indexed owner, string title, uint256 timestamp)`
+- `ReminderDeleted(uint256 indexed id, address indexed owner)`
+- `ReminderCompleted(uint256 indexed id, address indexed owner)`
+
+---
+
+## 🔔 Notification System
+
+Remindr uses a **hybrid notification system** that combines on-chain storage with client-side notifications.
+
+### How It Works
+
+1. **Create Reminder** → Stored on-chain (Base blockchain)
+
+   - Your reminder is permanently stored as a smart contract transaction
+   - Includes: title, description, and Unix timestamp
+
+2. **Polling System** → Frontend checks every 30 seconds
+
+   - The app continuously monitors your reminders
+   - Checks if any reminder timestamp has passed
+   - Works even when the tab is in the background
+
+3. **When Time Comes** → Multiple notification methods:
+
+   **Browser Notification** (if enabled):
+
+   - Shows a native browser notification
+   - Works even when the tab is closed (browser-dependent)
+   - Includes reminder title and description
+   - Auto-closes after 10 seconds
+
+   **Toast Notification** (always active):
+
+   - Appears in the app as a toast message
+   - Shows reminder details
+   - Has a "View" button to scroll to the reminder card
+
+   **Visual Highlighting**:
+
+   - The reminder card gets a yellow ring highlight
+   - Automatically scrolls into view when clicking "View"
+
+### Enabling Notifications
+
+1. Connect your wallet
+2. Click "Enable Notifications" when prompted
+3. Allow browser notifications when asked
+4. You're all set! 🔔
+
+### Limitations
+
+- **Client-side only**: Notifications only work when the browser/app is open
+- **Browser dependent**: Native notifications require user permission
+- **Polling interval**: Checks every 30 seconds (trade-off for performance)
+
+### Future Enhancements
+
+- Server-side notification service
+- Email/SMS notifications
+- Push notifications via service workers
+- Real-time WebSocket updates
+
+---
+
+## 🎨 Frontend Features
+
+### Wallet Connection
+
+- **Reown AppKit** integration
+- Support for multiple wallets (MetaMask, Coinbase Wallet, WalletConnect, etc.)
+- Easy connection/disconnection
+- Network switching
+
+### Theme System
+
+- **Light/Dark Mode** toggle
+- Smooth theme transitions
+- Beautiful gradients for both themes
+- Glassmorphism effects
+
+### User Interface
+
+- **Animated backgrounds** with floating blobs
+- **Smooth transitions** and hover effects
+- **Responsive cards** for reminders
+- **Color-coded status** (pending, overdue, completed)
+- **Time display** with relative formatting ("in 2 hours", "3 days ago")
+
+### Reminder Management
+
+- **Create** new reminders with date/time picker
+- **Edit** existing reminders
+- **Complete** reminders with one click
+- **Delete** reminders
+- **Filter** by status (pending, overdue, completed)
+- **Auto-refresh** after transactions
+
+---
+
+## 🌐 Network Information
+
+| Network        | Chain ID | Explorer                                            | RPC URL                                  |
+| -------------- | -------- | --------------------------------------------------- | ---------------------------------------- |
+| Base Mainnet   | 8453     | [BaseScan](https://basescan.org)                    | https://mainnet.base.org                 |
+| Base Sepolia   | 84532    | [BaseScan Sepolia](https://sepolia.basescan.org)    | https://sepolia.base.org                 |
+| Celo Mainnet   | 42220    | [CeloScan](https://celoscan.io)                     | https://forno.celo.org                   |
+| Celo Alfajores | 44787    | [CeloScan Alfajores](https://alfajores.celoscan.io) | https://alfajores-forno.celo-testnet.org |
+
+---
+
+## 📁 Project Structure
+
+```
+Base/
+├── contracts/
+│   └── Remindr.sol          # Main smart contract
+├── scripts/
+│   ├── deploy.js            # Deployment script
+│   ├── verify.js            # Verification script (testnet)
+│   └── verify-mainnet.js    # Verification script (mainnet)
+├── frontend/
+│   ├── app/
+│   │   ├── layout.tsx       # Root layout with providers
+│   │   ├── page.tsx         # Main application page
+│   │   └── globals.css      # Global styles & gradients
+│   ├── components/
+│   │   ├── ui/              # shadcn/ui components
+│   │   ├── theme-provider.tsx
+│   │   └── theme-toggle.tsx
+│   ├── hooks/
+│   │   └── useReminderNotifications.tsx  # Notification hook
+│   ├── lib/
+│   │   ├── contract.ts      # Contract ABI & address
+│   │   └── wagmi.tsx        # Wagmi/Reown configuration
+│   └── package.json
+├── hardhat.config.js        # Hardhat configuration
+├── package.json
+└── README.md
+```
+
+---
+
+## 🔐 Security Considerations
+
+- ⚠️ **Never commit** your `.env` file or private keys
+- ✅ Smart contract uses `require()` statements for access control
+- ✅ Only reminder owners can update/delete their reminders
+- ✅ Timestamp validation prevents past-dated reminders
+- ✅ All functions emit events for transparency
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- **Base** - For the amazing L2 network
+- **Reown** (WalletConnect) - For seamless wallet integration
+- **shadcn/ui** - For beautiful UI components
+- **Framer Motion** - For smooth animations
+
+---
+
+## 💡 Ideas for Future Enhancements
+
+- 🔔 Server-side notification service
+- 📧 Email notifications
+- 📱 Mobile app (React Native)
+- 🔄 Recurring reminders
+- 👥 Shared reminders with other wallets
+- 🏷️ Tags/categories for reminders
+- 📊 Analytics dashboard
+- 🔐 Multi-sig wallet support
+- 🌍 Multi-language support
+- ⚡ Gasless transactions (meta-transactions)
+
+---
+
+**Built with ❤️ for the Web3 ecosystem**
+
+_Never miss an important date again. Stay organized, stay on-chain._ 🔔
