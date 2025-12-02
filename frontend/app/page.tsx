@@ -195,11 +195,11 @@ export default function Home() {
   const overdueReminders = activeReminders.filter((r) => isPast(r.timestamp));
 
   return (
-    <div className="min-h-screen dark:bg-gradient-to-br dark:from-indigo-950 dark:via-purple-950 dark:to-teal-800 bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-100 relative overflow-hidden transition-colors duration-500">
+    <div className="min-h-screen bg-smooth-gradient relative overflow-hidden transition-colors duration-500">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
-          className="absolute -top-40 -right-40 w-80 h-80 dark:bg-purple-500 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl dark:opacity-20 opacity-30 animate-blob"
+          className="absolute -top-40 -right-40 w-[32rem] h-[32rem] dark:bg-purple-600 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl dark:opacity-20 opacity-25 animate-blob"
           animate={{
             x: [0, 100, 0],
             y: [0, 100, 0],
@@ -211,7 +211,7 @@ export default function Home() {
           }}
         />
         <motion.div
-          className="absolute -bottom-40 -left-40 w-80 h-80 dark:bg-cyan-500 bg-cyan-300 rounded-full mix-blend-multiply filter blur-xl dark:opacity-20 opacity-30 animate-blob animation-delay-2000"
+          className="absolute -bottom-40 -left-40 w-[32rem] h-[32rem] dark:bg-cyan-600 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl dark:opacity-18 opacity-25 animate-blob animation-delay-2000"
           animate={{
             x: [0, -100, 0],
             y: [0, -100, 0],
@@ -223,7 +223,7 @@ export default function Home() {
           }}
         />
         <motion.div
-          className="absolute top-1/2 left-1/2 w-80 h-80 dark:bg-teal-500 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl dark:opacity-20 opacity-30 animate-blob animation-delay-4000"
+          className="absolute top-1/2 right-1/4 w-[32rem] h-[32rem] dark:bg-indigo-600 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl dark:opacity-18 opacity-25 animate-blob animation-delay-4000"
           animate={{
             x: [0, 50, 0],
             y: [0, -50, 0],
@@ -299,19 +299,19 @@ export default function Home() {
             >
               <Badge
                 variant="secondary"
-                className="bg-green-500/20 text-green-300 border-green-500/50"
+                className="bg-green-500 dark:bg-green-500/20 text-white dark:text-green-300 border-green-600 dark:border-green-500/50 shadow-md dark:shadow-none px-3 py-1.5"
               >
-                <div className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse" />
+                <div className="w-2 h-2 bg-white dark:bg-green-400 rounded-full mr-2 animate-pulse" />
                 Connected
               </Badge>
-              <span className="dark:text-white/60 text-gray-600 font-mono text-sm">
+              <span className="dark:text-white/60 text-gray-700 dark:text-white/60 font-mono text-sm font-medium bg-white/60 dark:bg-white/10 px-3 py-1.5 rounded-md backdrop-blur-sm border border-gray-200 dark:border-white/20">
                 {address?.slice(0, 6)}...{address?.slice(-4)}
               </span>
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={() => open({ view: "Account" })}
-                className="dark:text-white/80 dark:hover:text-white text-gray-700 hover:text-gray-900"
+                className="bg-white/80 dark:bg-white/10 backdrop-blur-sm border-gray-300 dark:border-white/20 text-gray-800 dark:text-white/90 hover:bg-white dark:hover:bg-white/20 hover:border-gray-400 dark:hover:border-white/30 shadow-sm font-medium transition-all duration-200"
               >
                 Manage
               </Button>

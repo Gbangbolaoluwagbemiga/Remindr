@@ -145,3 +145,31 @@
 .animation-delay-4000 {
   animation-delay: 4s;
 }
+
+/* Smooth gradient for light mode */
+.bg-smooth-gradient {
+  background: linear-gradient(
+    135deg,
+    rgb(248 250 252) 0%,
+    rgb(239 246 255) 25%,
+    rgb(238 242 255) 50%,
+    rgb(245 243 255) 75%,
+    rgb(250 245 255) 100%
+  );
+}
+
+/* Dark mode gradient override - Premium hackathon-ready gradient */
+.dark .bg-smooth-gradient {
+  background: linear-gradient(
+    135deg,
+    rgb(7 16 45) 0%,
+    rgb(15 23 42) 10%,
+    rgb(30 27 75) 20%,
+    rgb(49 46 129) 35%,
+    rgb(67 56 202) 50%,
+    rgb(88 28 135) 65%,
+    rgb(109 40 217) 80%,
+    rgb(13 148 136) 95%,
+    rgb(20 184 166) 100%
+  );
+}
