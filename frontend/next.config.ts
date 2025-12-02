@@ -1,16 +1,31 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Configure Turbopack (Next.js 16 default)
-  turbopack: {
-    // Turbopack configuration if needed
+  // Exclude problematic packages from server components
+  serverExternalPackages: ["pino", "thread-stream"],
+
+  webpack: (config, { isServer }) => {
+    // Ignore test files and problematic imports
+    config.resolve = config.resolve || {};
+    config.resolve.alias = {
+      ...config.resolve.alias,
+    };
+
+    // Ignore patterns for browser
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+        crypto: false,
+      };
+    }
+
+    return config;
   },
-  // Suppress workspace root warning
-  experimental: {
-    turbo: {
-      root: process.cwd(),
-    },
-  },
+
+  // Empty turbopack config to allow webpack config
+  turbopack: {},
 };
 
 export default nextConfig;
