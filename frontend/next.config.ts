@@ -1,18 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Suppress Turbopack warnings about test files in node_modules
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-      };
-    }
-    return config;
+  // Configure Turbopack (Next.js 16 default)
+  turbopack: {
+    // Turbopack configuration if needed
   },
-  // Ignore test files in node_modules during build
-  transpilePackages: [],
+  // Suppress workspace root warning
+  experimental: {
+    turbo: {
+      root: process.cwd(),
+    },
+  },
 };
 
 export default nextConfig;
