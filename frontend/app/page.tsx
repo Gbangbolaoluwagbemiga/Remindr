@@ -195,11 +195,11 @@ export default function Home() {
   const overdueReminders = activeReminders.filter((r) => isPast(r.timestamp));
 
   return (
-    <div className="min-h-screen dark:bg-gradient-to-br dark:from-indigo-950 dark:via-purple-950 dark:to-teal-800 bg-gradient-to-br from-indigo-50 via-purple-50 to-cyan-100 relative overflow-hidden transition-colors duration-500">
+    <div className="min-h-screen dark:bg-gradient-to-br dark:from-indigo-950 dark:via-purple-950 dark:to-teal-800 bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-100 relative overflow-hidden transition-colors duration-500">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
-          className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"
+          className="absolute -top-40 -right-40 w-80 h-80 dark:bg-purple-500 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl dark:opacity-20 opacity-30 animate-blob"
           animate={{
             x: [0, 100, 0],
             y: [0, 100, 0],
@@ -211,7 +211,7 @@ export default function Home() {
           }}
         />
         <motion.div
-          className="absolute -bottom-40 -left-40 w-80 h-80 dark:bg-cyan-500 bg-cyan-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"
+          className="absolute -bottom-40 -left-40 w-80 h-80 dark:bg-cyan-500 bg-cyan-300 rounded-full mix-blend-multiply filter blur-xl dark:opacity-20 opacity-30 animate-blob animation-delay-2000"
           animate={{
             x: [0, -100, 0],
             y: [0, -100, 0],
@@ -223,7 +223,7 @@ export default function Home() {
           }}
         />
         <motion.div
-          className="absolute top-1/2 left-1/2 w-80 h-80 dark:bg-teal-500 bg-teal-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"
+          className="absolute top-1/2 left-1/2 w-80 h-80 dark:bg-teal-500 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl dark:opacity-20 opacity-30 animate-blob animation-delay-4000"
           animate={{
             x: [0, 50, 0],
             y: [0, -50, 0],
@@ -328,11 +328,13 @@ export default function Home() {
               transition={{ delay: 0.2 }}
               className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"
             >
-              <Card className="bg-white/10 backdrop-blur-lg border-white/20 text-white">
+              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-white/40 dark:border-white/20 text-gray-900 dark:text-white shadow-lg">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-white/60">Total</p>
+                      <p className="text-sm text-gray-600 dark:text-white/60">
+                        Total
+                      </p>
                       <p className="text-2xl font-bold">
                         {reminders?.filter((r) => r.exists).length || 0}
                       </p>
@@ -341,11 +343,13 @@ export default function Home() {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="bg-white/10 backdrop-blur-lg border-white/20 text-white">
+              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-white/40 dark:border-white/20 text-gray-900 dark:text-white shadow-lg">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-white/60">Pending</p>
+                      <p className="text-sm text-gray-600 dark:text-white/60">
+                        Pending
+                      </p>
                       <p className="text-2xl font-bold text-blue-400">
                         {pendingReminders.length}
                       </p>
@@ -354,11 +358,13 @@ export default function Home() {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="bg-white/10 backdrop-blur-lg border-white/20 text-white">
+              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-white/40 dark:border-white/20 text-gray-900 dark:text-white shadow-lg">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-white/60">Overdue</p>
+                      <p className="text-sm text-gray-600 dark:text-white/60">
+                        Overdue
+                      </p>
                       <p className="text-2xl font-bold text-red-400">
                         {overdueReminders.length}
                       </p>
@@ -367,11 +373,13 @@ export default function Home() {
                   </div>
                 </CardContent>
               </Card>
-              <Card className="bg-white/10 backdrop-blur-lg border-white/20 text-white">
+              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-white/40 dark:border-white/20 text-gray-900 dark:text-white shadow-lg">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-white/60">Completed</p>
+                      <p className="text-sm text-gray-600 dark:text-white/60">
+                        Completed
+                      </p>
                       <p className="text-2xl font-bold text-green-400">
                         {completedReminders.length}
                       </p>
@@ -390,13 +398,13 @@ export default function Home() {
                 transition={{ delay: 0.3 }}
                 className="lg:col-span-1"
               >
-                <Card className="bg-white/10 backdrop-blur-lg border-white/20 shadow-2xl">
+                <Card className="bg-white/90 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 shadow-2xl">
                   <CardHeader>
-                    <CardTitle className="text-white flex items-center gap-2">
+                    <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
                       <Plus className="w-5 h-5" />
                       {editingId ? "Edit Reminder" : "Create Reminder"}
                     </CardTitle>
-                    <CardDescription className="text-white/60">
+                    <CardDescription className="text-gray-600 dark:text-white/60">
                       {editingId
                         ? "Update your reminder details"
                         : "Set a new on-chain reminder"}
@@ -404,18 +412,18 @@ export default function Home() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <label className="text-sm font-medium text-white/80 mb-2 block">
+                      <label className="text-sm font-medium text-gray-700 dark:text-white/80 mb-2 block">
                         Title *
                       </label>
                       <Input
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="e.g., Governance vote deadline"
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/40"
+                        className="bg-white/60 dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40"
                       />
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-white/80 mb-2 block">
+                      <label className="text-sm font-medium text-gray-700 dark:text-white/80 mb-2 block">
                         Description
                       </label>
                       <Textarea
@@ -423,18 +431,18 @@ export default function Home() {
                         onChange={(e) => setDescription(e.target.value)}
                         placeholder="Optional description or notes"
                         rows={3}
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/40"
+                        className="bg-white/60 dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40"
                       />
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-white/80 mb-2 block">
+                      <label className="text-sm font-medium text-gray-700 dark:text-white/80 mb-2 block">
                         Date & Time *
                       </label>
                       <Input
                         type="datetime-local"
                         value={dateTime}
                         onChange={(e) => setDateTime(e.target.value)}
-                        className="bg-white/10 border-white/20 text-white"
+                        className="bg-white/60 dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white"
                       />
                     </div>
                     <div className="flex gap-2">
@@ -583,16 +591,18 @@ export default function Home() {
                 {/* Empty State */}
                 {(!reminders ||
                   reminders.filter((r) => r.exists).length === 0) && (
-                  <Card className="bg-white/10 backdrop-blur-lg border-white/20">
+                  <Card className="bg-white/90 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 shadow-lg">
                     <CardContent className="p-12 text-center">
                       <motion.div
                         animate={{ scale: [1, 1.1, 1] }}
                         transition={{ duration: 2, repeat: Infinity }}
                       >
-                        <Bell className="w-16 h-16 text-white/40 mx-auto mb-4" />
+                        <Bell className="w-16 h-16 text-gray-400 dark:text-white/40 mx-auto mb-4" />
                       </motion.div>
-                      <p className="text-white/60 text-lg">No reminders yet</p>
-                      <p className="text-white/40 text-sm mt-2">
+                      <p className="text-gray-700 dark:text-white/60 text-lg">
+                        No reminders yet
+                      </p>
+                      <p className="text-gray-500 dark:text-white/40 text-sm mt-2">
                         Create your first reminder to get started!
                       </p>
                     </CardContent>
@@ -645,14 +655,14 @@ function ReminderCard({
       layout
     >
       <Card
-        className={`bg-white/10 backdrop-blur-lg border-white/20 ${getVariantStyles()} transition-all hover:scale-[1.02]`}
+        className={`bg-white/90 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 shadow-lg ${getVariantStyles()} transition-all hover:scale-[1.02]`}
       >
         <CardContent className="p-4">
           <div className="flex justify-between items-start gap-4">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
                 <h3
-                  className={`font-semibold text-white ${
+                  className={`font-semibold text-gray-900 dark:text-white ${
                     variant === "completed" ? "line-through" : ""
                   }`}
                 >
@@ -674,11 +684,11 @@ function ReminderCard({
                 )}
               </div>
               {reminder.description && (
-                <p className="text-white/70 text-sm mb-3">
+                <p className="text-gray-700 dark:text-white/70 text-sm mb-3">
                   {reminder.description}
                 </p>
               )}
-              <div className="flex items-center gap-4 text-sm text-white/60">
+              <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-white/60">
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
                   {formatDate(reminder.timestamp)}
@@ -698,7 +708,7 @@ function ReminderCard({
                   variant="ghost"
                   onClick={() => onEdit(reminder)}
                   disabled={isPending}
-                  className="text-white/80 hover:text-white hover:bg-white/10"
+                  className="text-gray-700 dark:text-white/80 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10"
                 >
                   <Edit2 className="w-4 h-4" />
                 </Button>
