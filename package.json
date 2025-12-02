@@ -13,7 +13,9 @@
     "verify:base": "hardhat verify --network base",
     "verify:celo": "hardhat verify --network celo",
     "verify:base:testnet": "hardhat run scripts/verify.js --network baseSepolia",
-    "verify:base:mainnet": "hardhat run scripts/verify-mainnet.js --network base"
+    "verify:base:mainnet": "hardhat run scripts/verify-mainnet.js --network base",
+    "verify:celo:testnet": "hardhat run scripts/verify-celo.js --network celoAlfajores",
+    "verify:celo:mainnet": "hardhat run scripts/verify-celo-mainnet.js --network celo"
   },
   "keywords": [
     "web3",
