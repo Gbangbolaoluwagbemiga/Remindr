@@ -1,4 +1,6 @@
 import type { NextConfig } from "next";
+import webpack from "webpack";
+import path from "path";
 
 const nextConfig: NextConfig = {
   // Exclude problematic packages from server components
@@ -9,7 +11,17 @@ const nextConfig: NextConfig = {
     config.resolve = config.resolve || {};
     config.resolve.alias = {
       ...config.resolve.alias,
+      // Stub Solana dependencies since we only use EVM chains
+      "@solana/kit": path.resolve(__dirname, "./webpack-stubs/solana-kit.js"),
     };
+
+    // Use IgnorePlugin to ignore other Solana modules if needed
+    config.plugins = config.plugins || [];
+    config.plugins.push(
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^@solana\/program\/system$/,
+      })
+    );
 
     // Ensure proper module resolution
     config.resolve.extensions = [
