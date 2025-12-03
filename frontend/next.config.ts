@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-import webpack from "webpack";
 import path from "path";
 
 const nextConfig: NextConfig = {
@@ -18,6 +17,7 @@ const nextConfig: NextConfig = {
     };
 
     // Use IgnorePlugin to ignore optional dependencies
+    const webpack = require("webpack");
     config.plugins = config.plugins || [];
     config.plugins.push(
       new webpack.IgnorePlugin({
