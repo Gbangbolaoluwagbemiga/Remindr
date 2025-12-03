@@ -59,6 +59,8 @@ export function useReminderNotifications(
           // Show browser notification
           if (permission === "granted") {
             try {
+              // timestamp is not part of the standard NotificationOptions type
+              // but some browsers support it, so we use type assertion
               const notification = new Notification("🔔 Remindr Alert", {
                 body: reminder.description
                   ? `${reminder.title}\n${reminder.description}`
@@ -68,7 +70,7 @@ export function useReminderNotifications(
                 tag: `reminder-${reminder.id}`,
                 requireInteraction: true,
                 timestamp: reminderTime * 1000,
-              });
+              } as NotificationOptions & { timestamp?: number });
 
               notification.onclick = () => {
                 window.focus();

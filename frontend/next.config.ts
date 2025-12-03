@@ -5,6 +5,8 @@ import path from "path";
 const nextConfig: NextConfig = {
   // Exclude problematic packages from server components
   serverExternalPackages: ["pino", "thread-stream"],
+  // Set outputFileTracingRoot to silence the workspace warning
+  outputFileTracingRoot: path.join(__dirname, "../"),
 
   webpack: (config, { isServer }) => {
     // Ignore test files and problematic imports
@@ -15,11 +17,19 @@ const nextConfig: NextConfig = {
       "@solana/kit": path.resolve(__dirname, "./webpack-stubs/solana-kit.js"),
     };
 
-    // Use IgnorePlugin to ignore other Solana modules if needed
+    // Use IgnorePlugin to ignore optional dependencies
     config.plugins = config.plugins || [];
     config.plugins.push(
       new webpack.IgnorePlugin({
         resourceRegExp: /^@solana\/program\/system$/,
+      }),
+      // Ignore React Native dependencies (not needed for web)
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^@react-native-async-storage\/async-storage$/,
+      }),
+      // Ignore optional pino-pretty dependency
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^pino-pretty$/,
       })
     );
 
