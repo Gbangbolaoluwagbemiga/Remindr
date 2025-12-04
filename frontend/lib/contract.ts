@@ -1,114 +1,9 @@
-// Remindr Contract ABI
-export const REMINDR_ABI = [
-  {
-    inputs: [
-      { internalType: "string", name: "_title", type: "string" },
-      { internalType: "string", name: "_description", type: "string" },
-      { internalType: "uint256", name: "_timestamp", type: "uint256" },
-    ],
-    name: "createReminder",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "uint256", name: "_id", type: "uint256" },
-      { internalType: "string", name: "_title", type: "string" },
-      { internalType: "string", name: "_description", type: "string" },
-      { internalType: "uint256", name: "_timestamp", type: "uint256" },
-    ],
-    name: "updateReminder",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "uint256", name: "_id", type: "uint256" }],
-    name: "completeReminder",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "uint256", name: "_id", type: "uint256" }],
-    name: "deleteReminder",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "address", name: "_user", type: "address" }],
-    name: "getUserReminders",
-    outputs: [
-      {
-        components: [
-          { internalType: "uint256", name: "id", type: "uint256" },
-          { internalType: "address", name: "owner", type: "address" },
-          { internalType: "string", name: "title", type: "string" },
-          { internalType: "string", name: "description", type: "string" },
-          { internalType: "uint256", name: "timestamp", type: "uint256" },
-          { internalType: "bool", name: "isCompleted", type: "bool" },
-          { internalType: "bool", name: "exists", type: "bool" },
-          { internalType: "uint256", name: "createdAt", type: "uint256" },
-        ],
-        internalType: "struct Remindr.Reminder[]",
-        name: "",
-        type: "tuple[]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "address", name: "_user", type: "address" }],
-    name: "getPendingReminders",
-    outputs: [
-      {
-        components: [
-          { internalType: "uint256", name: "id", type: "uint256" },
-          { internalType: "address", name: "owner", type: "address" },
-          { internalType: "string", name: "title", type: "string" },
-          { internalType: "string", name: "description", type: "string" },
-          { internalType: "uint256", name: "timestamp", type: "uint256" },
-          { internalType: "bool", name: "isCompleted", type: "bool" },
-          { internalType: "bool", name: "exists", type: "bool" },
-          { internalType: "uint256", name: "createdAt", type: "uint256" },
-        ],
-        internalType: "struct Remindr.Reminder[]",
-        name: "",
-        type: "tuple[]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "uint256", name: "_id", type: "uint256" }],
-    name: "getReminder",
-    outputs: [
-      {
-        components: [
-          { internalType: "uint256", name: "id", type: "uint256" },
-          { internalType: "address", name: "owner", type: "address" },
-          { internalType: "string", name: "title", type: "string" },
-          { internalType: "string", name: "description", type: "string" },
-          { internalType: "uint256", name: "timestamp", type: "uint256" },
-          { internalType: "bool", name: "isCompleted", type: "bool" },
-          { internalType: "bool", name: "exists", type: "bool" },
-          { internalType: "uint256", name: "createdAt", type: "uint256" },
-        ],
-        internalType: "struct Remindr.Reminder",
-        name: "",
-        type: "tuple",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-] as const;
+// Remindr Contract Configuration
+import remindrAbi from "./remindr-abi.json";
 
-// Contract address on Base Mainnet
+export const REMINDR_ABI = remindrAbi;
+
+// Contract address on Base Mainnet (will need to be updated after redeployment)
 export const REMINDR_ADDRESS =
   "0xfe4a4d81E4f0F17CA959b07D39Ab18493efc4B0C" as const;
 
@@ -130,3 +25,77 @@ export const base = {
     default: { name: "BaseScan", url: "https://basescan.org" },
   },
 } as const;
+
+// Enums matching the contract
+export enum RecurrenceType {
+  None = 0,
+  Daily = 1,
+  Weekly = 2,
+  Monthly = 3,
+  Yearly = 4,
+  Custom = 5,
+}
+
+export enum ReminderCategory {
+  Personal = 0,
+  Governance = 1,
+  DeFi = 2,
+  NFT = 3,
+  Token = 4,
+  Airdrop = 5,
+  Other = 6,
+}
+
+export enum Priority {
+  Low = 0,
+  Medium = 1,
+  High = 2,
+}
+
+// Type definitions
+export interface Reminder {
+  id: bigint;
+  owner: string;
+  title: string;
+  description: string;
+  timestamp: bigint;
+  isCompleted: boolean;
+  exists: boolean;
+  createdAt: bigint;
+  recurrenceType: RecurrenceType;
+  recurrenceInterval: bigint;
+  nextOccurrence: bigint;
+  isPublic: boolean;
+  category: ReminderCategory;
+  priority: Priority;
+  tags: string[];
+  participants: string[];
+  templateId: bigint;
+}
+
+export interface UserStats {
+  totalRemindersCreated: bigint;
+  totalRemindersCompleted: bigint;
+  currentStreak: bigint;
+  longestStreak: bigint;
+  lastCompletionDate: bigint;
+  reputationScore: bigint;
+}
+
+export interface Achievement {
+  id: bigint;
+  name: string;
+  description: string;
+  requirement: bigint;
+  isActive: boolean;
+}
+
+export interface Template {
+  id: bigint;
+  name: string;
+  title: string;
+  description: string;
+  category: ReminderCategory;
+  isActive: boolean;
+  usageCount: bigint;
+}
