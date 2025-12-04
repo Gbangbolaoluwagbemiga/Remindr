@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { AppKitButton } from "@reown/appkit/react";
-import { Bell, Sparkles, Shield, Zap, Wallet, Globe, Smartphone, ExternalLink, Code, CheckCircle2, Lock } from "lucide-react";
+import { Bell, Sparkles, Shield, Zap, Wallet, Globe, Smartphone, ExternalLink, Code, CheckCircle2, Lock, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -63,6 +63,22 @@ export function LandingPage() {
               whileTap={{ scale: 0.95 }}
             >
               <AppKitButton />
+            </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button
+                size="lg"
+                variant="outline"
+                className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20"
+                onClick={() => {
+                  document.getElementById("features")?.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
+                Explore Features
+                <ArrowRight className="ml-2 w-4 h-4" />
+              </Button>
             </motion.div>
           </div>
 
