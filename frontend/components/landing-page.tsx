@@ -46,6 +46,29 @@ const features = [
   },
 ];
 
+/**
+ * LandingPage Component
+ * 
+ * A comprehensive landing page for the Remindr application that showcases:
+ * - Hero section with animated branding and wallet connection CTA
+ * - Features section highlighting key capabilities
+ * - Smart contract addresses for Base networks
+ * - Tech stack information
+ * - Call-to-action section
+ * - Footer with branding
+ * 
+ * The component uses Framer Motion for smooth animations and is fully responsive.
+ * It displays when the user's wallet is not connected.
+ * 
+ * @example
+ * ```tsx
+ * import { LandingPage } from "@/components/landing-page";
+ * 
+ * function App() {
+ *   return <LandingPage />;
+ * }
+ * ```
+ */
 export function LandingPage() {
   return (
     <div className="min-h-screen bg-smooth-gradient relative overflow-hidden">
