@@ -109,7 +109,7 @@ export function LandingPage() {
               transition={{ delay: 0 }}
               whileHover={{ scale: 1.05 }}
             >
-              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl transition-shadow">
+              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl hover:shadow-purple-500/20 dark:hover:shadow-purple-500/30 transition-all duration-300">
               <CardHeader>
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
                   <Shield className="w-6 h-6 text-blue-400" />
@@ -133,7 +133,7 @@ export function LandingPage() {
               transition={{ delay: 0.1 }}
               whileHover={{ scale: 1.05 }}
             >
-              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl transition-shadow">
+              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl hover:shadow-purple-500/20 dark:hover:shadow-purple-500/30 transition-all duration-300">
                 <CardHeader>
                   <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
                     <Zap className="w-6 h-6 text-yellow-400" />
@@ -157,7 +157,7 @@ export function LandingPage() {
               transition={{ delay: 0.2 }}
               whileHover={{ scale: 1.05 }}
             >
-              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl transition-shadow">
+              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl hover:shadow-purple-500/20 dark:hover:shadow-purple-500/30 transition-all duration-300">
                 <CardHeader>
                   <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
                     <Bell className="w-6 h-6 text-purple-400" />
@@ -181,7 +181,7 @@ export function LandingPage() {
               transition={{ delay: 0.3 }}
               whileHover={{ scale: 1.05 }}
             >
-              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl transition-shadow">
+              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl hover:shadow-purple-500/20 dark:hover:shadow-purple-500/30 transition-all duration-300">
                 <CardHeader>
                   <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
                     <Wallet className="w-6 h-6 text-green-400" />
@@ -205,7 +205,7 @@ export function LandingPage() {
               transition={{ delay: 0.4 }}
               whileHover={{ scale: 1.05 }}
             >
-              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl transition-shadow">
+              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl hover:shadow-purple-500/20 dark:hover:shadow-purple-500/30 transition-all duration-300">
                 <CardHeader>
                   <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
                     <Globe className="w-6 h-6 text-cyan-400" />
@@ -229,7 +229,7 @@ export function LandingPage() {
               transition={{ delay: 0.5 }}
               whileHover={{ scale: 1.05 }}
             >
-              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl transition-shadow">
+              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl hover:shadow-purple-500/20 dark:hover:shadow-purple-500/30 transition-all duration-300">
                 <CardHeader>
                   <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
                     <Smartphone className="w-6 h-6 text-pink-400" />
@@ -258,7 +258,7 @@ export function LandingPage() {
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
-            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20">
+            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
                   <Globe className="w-5 h-5 text-blue-400" />
@@ -287,7 +287,7 @@ export function LandingPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20">
+            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
                   <Globe className="w-5 h-5 text-blue-400" />
@@ -351,7 +351,7 @@ export function LandingPage() {
             🛠️ Tech Stack
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20">
+            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
                   <Code className="w-5 h-5 text-blue-400" />
@@ -366,7 +366,7 @@ export function LandingPage() {
                 </ul>
               </CardContent>
             </Card>
-            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20">
+            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-purple-400" />
