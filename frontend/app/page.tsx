@@ -328,12 +328,16 @@ export default function Home() {
   // Show landing page when not connected
   if (!isConnected) {
     return (
-      <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
         <div className="absolute top-4 right-4 z-20">
           <ThemeToggle />
         </div>
         <LandingPage />
-      </>
+      </motion.div>
     );
   }
 
