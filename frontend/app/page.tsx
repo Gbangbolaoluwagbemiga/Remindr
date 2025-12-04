@@ -6,7 +6,21 @@ import {
   useWriteContract,
   useWaitForTransactionReceipt,
 } from "wagmi";
-import { REMINDR_ABI, REMINDR_ADDRESS } from "@/lib/contract";
+import {
+  REMINDR_ABI,
+  REMINDR_ADDRESS,
+  Reminder,
+  RecurrenceType,
+  Category,
+  ReminderPriority,
+  Template,
+  UserStats,
+  getRecurrenceLabel,
+  getCategoryLabel,
+  getPriorityLabel,
+  getCategoryColor,
+  getPriorityColor,
+} from "@/lib/contract";
 import { useState, useEffect } from "react";
 import { useAppKit, AppKitButton } from "@reown/appkit/react";
 import { format, formatDistanceToNow } from "date-fns";
@@ -19,10 +33,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import {
   Calendar,
@@ -35,27 +46,41 @@ import {
   Zap,
   Wallet,
   Bell,
+  Users,
+  Trophy,
+  TrendingUp,
+  FileText,
+  Repeat,
+  Tag,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useReminderNotifications } from "@/hooks/useReminderNotifications";
+import { ReminderForm } from "@/components/reminder-form";
 
-interface Reminder {
-  id: bigint;
-  owner: string;
-  title: string;
-  description: string;
-  timestamp: bigint;
-  isCompleted: boolean;
-  exists: boolean;
-  createdAt: bigint;
-}
+type ViewMode = "my" | "public" | "templates" | "stats";
 
 export default function Home() {
   const { address, isConnected } = useAccount();
   const { open } = useAppKit();
+  const [viewMode, setViewMode] = useState<ViewMode>("my");
+  const [selectedTemplate, setSelectedTemplate] = useState<bigint | null>(null);
+
+  // Form state
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dateTime, setDateTime] = useState("");
+  const [recurrenceType, setRecurrenceType] = useState<RecurrenceType>(
+    RecurrenceType.None
+  );
+  const [recurrenceInterval, setRecurrenceInterval] = useState("0");
+  const [category, setCategory] = useState<Category>(Category.Other);
+  const [priority, setPriority] = useState<ReminderPriority>(
+    ReminderPriority.Medium
+  );
+  const [tags, setTags] = useState<string[]>([]);
+  const [isPublic, setIsPublic] = useState(false);
   const [editingId, setEditingId] = useState<bigint | null>(null);
   const [isCreating, setIsCreating] = useState(false);
 
@@ -66,9 +91,41 @@ export default function Home() {
     functionName: "getUserReminders",
     args: address ? [address] : undefined,
     query: {
-      enabled: !!address,
+      enabled: !!address && viewMode === "my",
     },
   }) as { data: Reminder[] | undefined; refetch: () => void };
+
+  // Read public reminders
+  const { data: publicReminders, refetch: refetchPublic } = useReadContract({
+    address: REMINDR_ADDRESS,
+    abi: REMINDR_ABI,
+    functionName: "getPublicReminders",
+    args: [BigInt(20), BigInt(0)],
+    query: {
+      enabled: viewMode === "public",
+    },
+  }) as { data: Reminder[] | undefined; refetch: () => void };
+
+  // Read templates
+  const { data: templates } = useReadContract({
+    address: REMINDR_ADDRESS,
+    abi: REMINDR_ABI,
+    functionName: "getTemplates",
+    query: {
+      enabled: viewMode === "templates",
+    },
+  }) as { data: Template[] | undefined };
+
+  // Read user stats
+  const { data: userStats } = useReadContract({
+    address: REMINDR_ADDRESS,
+    abi: REMINDR_ABI,
+    functionName: "getUserStats",
+    args: address ? [address] : undefined,
+    query: {
+      enabled: !!address,
+    },
+  }) as { data: UserStats | undefined };
 
   // Write contract hooks
   const { writeContract, data: hash, isPending } = useWriteContract();
@@ -77,18 +134,30 @@ export default function Home() {
       hash,
     });
 
-  // Refetch reminders after successful transaction
+  // Refetch after successful transaction
   useEffect(() => {
     if (isConfirmed) {
       refetch();
-      setTitle("");
-      setDescription("");
-      setDateTime("");
-      setEditingId(null);
-      setIsCreating(false);
+      refetchPublic();
+      resetForm();
       toast.success("Transaction confirmed! 🎉");
     }
-  }, [isConfirmed, refetch]);
+  }, [isConfirmed, refetch, refetchPublic]);
+
+  const resetForm = () => {
+    setTitle("");
+    setDescription("");
+    setDateTime("");
+    setRecurrenceType(RecurrenceType.None);
+    setRecurrenceInterval("0");
+    setCategory(Category.Other);
+    setPriority(ReminderPriority.Medium);
+    setTags([]);
+    setIsPublic(false);
+    setEditingId(null);
+    setIsCreating(false);
+    setSelectedTemplate(null);
+  };
 
   const handleCreateReminder = () => {
     if (!title || !dateTime) {
@@ -109,8 +178,37 @@ export default function Home() {
       address: REMINDR_ADDRESS,
       abi: REMINDR_ABI,
       functionName: "createReminder",
-      args: [title, description || "", BigInt(timestamp)],
+      args: [
+        title,
+        description || "",
+        BigInt(timestamp),
+        recurrenceType,
+        BigInt(recurrenceInterval || "0"),
+        isPublic,
+        category,
+        priority,
+        tags,
+        selectedTemplate || BigInt(0),
+      ],
     });
+  };
+
+  const handleCreateFromTemplate = (template: Template) => {
+    if (!dateTime) {
+      const defaultTime = new Date();
+      defaultTime.setTime(
+        defaultTime.getTime() + Number(template.defaultDuration) * 1000
+      );
+      setDateTime(format(defaultTime, "yyyy-MM-dd'T'HH:mm"));
+    }
+    setTitle(template.title);
+    setDescription(template.description);
+    setCategory(template.category);
+    setSelectedTemplate(template.id);
+    setViewMode("my");
+    toast.info(
+      "Template loaded! Fill in the date/time and create your reminder."
+    );
   };
 
   const handleUpdateReminder = (id: bigint) => {
@@ -131,7 +229,15 @@ export default function Home() {
       address: REMINDR_ADDRESS,
       abi: REMINDR_ABI,
       functionName: "updateReminder",
-      args: [id, title, description || "", BigInt(timestamp)],
+      args: [
+        id,
+        title,
+        description || "",
+        BigInt(timestamp),
+        category,
+        priority,
+        tags,
+      ],
     });
   };
 
@@ -155,6 +261,23 @@ export default function Home() {
     toast.info("Deleting reminder...");
   };
 
+  const handleAddParticipant = (id: bigint, participantAddress: string) => {
+    if (
+      !participantAddress ||
+      !participantAddress.match(/^0x[a-fA-F0-9]{40}$/)
+    ) {
+      toast.error("Invalid address");
+      return;
+    }
+    writeContract({
+      address: REMINDR_ADDRESS,
+      abi: REMINDR_ABI,
+      functionName: "addParticipant",
+      args: [id, participantAddress as `0x${string}`],
+    });
+    toast.info("Adding participant...");
+  };
+
   const startEditing = (reminder: Reminder) => {
     setEditingId(reminder.id);
     setTitle(reminder.title);
@@ -162,13 +285,13 @@ export default function Home() {
     setDateTime(
       format(new Date(Number(reminder.timestamp) * 1000), "yyyy-MM-dd'T'HH:mm")
     );
-  };
-
-  const cancelEditing = () => {
-    setEditingId(null);
-    setTitle("");
-    setDescription("");
-    setDateTime("");
+    setRecurrenceType(reminder.recurrenceType);
+    setRecurrenceInterval(reminder.recurrenceInterval.toString());
+    setCategory(reminder.category);
+    setPriority(reminder.priority);
+    setTags(reminder.tags);
+    setIsPublic(reminder.isPublic);
+    setViewMode("my");
   };
 
   const formatDate = (timestamp: bigint) => {
@@ -192,61 +315,34 @@ export default function Home() {
   const { permission, requestPermission, isSupported } =
     useReminderNotifications(reminders, isConnected);
 
+  const displayReminders = viewMode === "public" ? publicReminders : reminders;
   const activeReminders =
-    reminders?.filter((r) => r.exists && !r.isCompleted) || [];
+    displayReminders?.filter((r) => r.exists && !r.isCompleted) || [];
   const completedReminders =
-    reminders?.filter((r) => r.exists && r.isCompleted) || [];
+    displayReminders?.filter((r) => r.exists && r.isCompleted) || [];
   const pendingReminders = activeReminders.filter((r) => !isPast(r.timestamp));
   const overdueReminders = activeReminders.filter((r) => isPast(r.timestamp));
 
   return (
     <div className="min-h-screen bg-smooth-gradient relative overflow-hidden transition-colors duration-500">
-      {/* Animated background elements */}
+      {/* Animated background */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
           className="absolute -top-40 -right-40 w-[32rem] h-[32rem] dark:bg-purple-600 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl dark:opacity-20 opacity-25 animate-blob"
-          animate={{
-            x: [0, 100, 0],
-            y: [0, 100, 0],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            repeatType: "reverse",
-          }}
+          animate={{ x: [0, 100, 0], y: [0, 100, 0] }}
+          transition={{ duration: 20, repeat: Infinity, repeatType: "reverse" }}
         />
         <motion.div
           className="absolute -bottom-40 -left-40 w-[32rem] h-[32rem] dark:bg-cyan-600 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl dark:opacity-18 opacity-25 animate-blob animation-delay-2000"
-          animate={{
-            x: [0, -100, 0],
-            y: [0, -100, 0],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            repeatType: "reverse",
-          }}
-        />
-        <motion.div
-          className="absolute top-1/2 right-1/4 w-[32rem] h-[32rem] dark:bg-indigo-600 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl dark:opacity-18 opacity-25 animate-blob animation-delay-4000"
-          animate={{
-            x: [0, 50, 0],
-            y: [0, -50, 0],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            repeatType: "reverse",
-          }}
+          animate={{ x: [0, -100, 0], y: [0, -100, 0] }}
+          transition={{ duration: 20, repeat: Infinity, repeatType: "reverse" }}
         />
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 py-8 max-w-6xl">
-        {/* Theme Toggle - Top Right */}
+      <div className="relative z-10 container mx-auto px-4 py-8 max-w-7xl">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.3 }}
           className="absolute top-4 right-4 z-20"
         >
           <ThemeToggle />
@@ -256,8 +352,7 @@ export default function Home() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="text-center mb-8"
         >
           <div className="flex items-center justify-center gap-3 mb-4">
             <motion.div
@@ -277,15 +372,14 @@ export default function Home() {
             </motion.div>
           </div>
           <p className="text-xl text-gray-700 dark:text-white/80 mb-6">
-            Never miss a governance vote, token unlock, or important date again
+            Advanced on-chain reminders with recurring, shared, and public
+            features
           </p>
 
-          {/* Wallet Connection - Prominent */}
           {!isConnected ? (
             <motion.div
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 200 }}
               className="flex flex-col items-center gap-4"
             >
               <div className="flex items-center gap-2 dark:text-white/60 text-gray-600 mb-2">
@@ -304,19 +398,18 @@ export default function Home() {
             >
               <Badge
                 variant="secondary"
-                className="bg-green-500 dark:bg-green-500/20 text-white dark:text-green-300 border-green-600 dark:border-green-500/50 shadow-md dark:shadow-none px-3 py-1.5"
+                className="bg-green-500 dark:bg-green-500/20 text-white dark:text-green-300 border-green-600 dark:border-green-500/50 shadow-md px-3 py-1.5"
               >
                 <div className="w-2 h-2 bg-white dark:bg-green-400 rounded-full mr-2 animate-pulse" />
                 Connected
               </Badge>
-              <span className="dark:text-white/60 text-gray-700 dark:text-white/60 font-mono text-sm font-medium bg-white/60 dark:bg-white/10 px-3 py-1.5 rounded-md backdrop-blur-sm border border-gray-200 dark:border-white/20">
+              <span className="dark:text-white/60 text-gray-700 font-mono text-sm font-medium bg-white/60 dark:bg-white/10 px-3 py-1.5 rounded-md backdrop-blur-sm border border-gray-200 dark:border-white/20">
                 {address?.slice(0, 6)}...{address?.slice(-4)}
               </span>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => open({ view: "Account" })}
-                className="bg-white/80 dark:bg-white/10 backdrop-blur-sm border-gray-300 dark:border-white/20 text-gray-800 dark:text-white/90 hover:bg-white dark:hover:bg-white/20 hover:border-gray-400 dark:hover:border-white/30 shadow-sm font-medium transition-all duration-200"
               >
                 Manage
               </Button>
@@ -326,355 +419,418 @@ export default function Home() {
 
         {isConnected && (
           <>
-            {/* Notification Permission Banner */}
-            {isSupported && permission !== "granted" && (
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-6"
+            {/* View Mode Tabs */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex gap-2 mb-6 justify-center flex-wrap"
+            >
+              <Button
+                variant={viewMode === "my" ? "default" : "outline"}
+                onClick={() => setViewMode("my")}
+                className={
+                  viewMode === "my"
+                    ? "bg-gradient-to-r from-purple-500 to-pink-500"
+                    : ""
+                }
               >
-                <Card className="bg-yellow-500/10 dark:bg-yellow-500/10 backdrop-blur-lg border-yellow-500/30 dark:border-yellow-500/30 shadow-lg">
-                  <CardContent className="p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Bell className="w-5 h-5 text-yellow-500" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
-                          Enable notifications to get alerted when reminders are
-                          due
-                        </p>
-                        <p className="text-xs text-gray-600 dark:text-white/60">
-                          You'll receive browser notifications even when the tab
-                          is closed
-                        </p>
-                      </div>
-                    </div>
-                    <Button
-                      onClick={requestPermission}
-                      size="sm"
-                      className="bg-yellow-500 hover:bg-yellow-600 text-white"
-                    >
-                      Enable
-                    </Button>
+                <Bell className="w-4 h-4 mr-2" />
+                My Reminders
+              </Button>
+              <Button
+                variant={viewMode === "public" ? "default" : "outline"}
+                onClick={() => setViewMode("public")}
+                className={
+                  viewMode === "public"
+                    ? "bg-gradient-to-r from-purple-500 to-pink-500"
+                    : ""
+                }
+              >
+                <Eye className="w-4 h-4 mr-2" />
+                Public Feed
+              </Button>
+              <Button
+                variant={viewMode === "templates" ? "default" : "outline"}
+                onClick={() => setViewMode("templates")}
+                className={
+                  viewMode === "templates"
+                    ? "bg-gradient-to-r from-purple-500 to-pink-500"
+                    : ""
+                }
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                Templates
+              </Button>
+              <Button
+                variant={viewMode === "stats" ? "default" : "outline"}
+                onClick={() => setViewMode("stats")}
+                className={
+                  viewMode === "stats"
+                    ? "bg-gradient-to-r from-purple-500 to-pink-500"
+                    : ""
+                }
+              >
+                <Trophy className="w-4 h-4 mr-2" />
+                Stats
+              </Button>
+            </motion.div>
+
+            {/* User Stats Dashboard */}
+            {viewMode === "stats" && userStats && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
+              >
+                <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
+                  <CardContent className="p-4">
+                    <p className="text-sm text-gray-600 dark:text-white/60">
+                      Created
+                    </p>
+                    <p className="text-3xl font-bold">
+                      {userStats.totalRemindersCreated.toString()}
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
+                  <CardContent className="p-4">
+                    <p className="text-sm text-gray-600 dark:text-white/60">
+                      Completed
+                    </p>
+                    <p className="text-3xl font-bold text-green-400">
+                      {userStats.totalRemindersCompleted.toString()}
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
+                  <CardContent className="p-4">
+                    <p className="text-sm text-gray-600 dark:text-white/60">
+                      Streak
+                    </p>
+                    <p className="text-3xl font-bold text-yellow-400">
+                      {userStats.streakDays.toString()} days
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
+                  <CardContent className="p-4">
+                    <p className="text-sm text-gray-600 dark:text-white/60">
+                      Reputation
+                    </p>
+                    <p className="text-3xl font-bold text-purple-400">
+                      {userStats.reputationScore.toString()}/1000
+                    </p>
                   </CardContent>
                 </Card>
               </motion.div>
             )}
 
+            {/* Templates View */}
+            {viewMode === "templates" && templates && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8"
+              >
+                {templates.map((template) => (
+                  <Card
+                    key={template.id.toString()}
+                    className="bg-white/80 dark:bg-white/10 backdrop-blur-lg hover:scale-105 transition-transform cursor-pointer"
+                    onClick={() => handleCreateFromTemplate(template)}
+                  >
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <FileText className="w-5 h-5" />
+                        {template.title}
+                      </CardTitle>
+                      <CardDescription>{template.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Badge className={getCategoryColor(template.category)}>
+                        {getCategoryLabel(template.category)}
+                      </Badge>
+                    </CardContent>
+                  </Card>
+                ))}
+              </motion.div>
+            )}
+
             {/* Stats Cards */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"
-            >
-              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-white/40 dark:border-white/20 text-gray-900 dark:text-white shadow-lg">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-600 dark:text-white/60">
-                        Total
-                      </p>
-                      <p className="text-2xl font-bold">
-                        {reminders?.filter((r) => r.exists).length || 0}
-                      </p>
+            {viewMode !== "stats" && viewMode !== "templates" && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"
+              >
+                <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-gray-600 dark:text-white/60">
+                          Total
+                        </p>
+                        <p className="text-2xl font-bold">
+                          {displayReminders?.filter((r) => r.exists).length ||
+                            0}
+                        </p>
+                      </div>
+                      <Bell className="w-8 h-8 text-yellow-400" />
                     </div>
-                    <Bell className="w-8 h-8 text-yellow-400" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-white/40 dark:border-white/20 text-gray-900 dark:text-white shadow-lg">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-600 dark:text-white/60">
-                        Pending
-                      </p>
-                      <p className="text-2xl font-bold text-blue-400">
-                        {pendingReminders.length}
-                      </p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-gray-600 dark:text-white/60">
+                          Pending
+                        </p>
+                        <p className="text-2xl font-bold text-blue-400">
+                          {pendingReminders.length}
+                        </p>
+                      </div>
+                      <Clock className="w-8 h-8 text-blue-400" />
                     </div>
-                    <Clock className="w-8 h-8 text-blue-400" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-white/40 dark:border-white/20 text-gray-900 dark:text-white shadow-lg">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-600 dark:text-white/60">
-                        Overdue
-                      </p>
-                      <p className="text-2xl font-bold text-red-400">
-                        {overdueReminders.length}
-                      </p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-gray-600 dark:text-white/60">
+                          Overdue
+                        </p>
+                        <p className="text-2xl font-bold text-red-400">
+                          {overdueReminders.length}
+                        </p>
+                      </div>
+                      <Zap className="w-8 h-8 text-red-400" />
                     </div>
-                    <Zap className="w-8 h-8 text-red-400" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-white/40 dark:border-white/20 text-gray-900 dark:text-white shadow-lg">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-600 dark:text-white/60">
-                        Completed
-                      </p>
-                      <p className="text-2xl font-bold text-green-400">
-                        {completedReminders.length}
-                      </p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-gray-600 dark:text-white/60">
+                          Completed
+                        </p>
+                        <p className="text-2xl font-bold text-green-400">
+                          {completedReminders.length}
+                        </p>
+                      </div>
+                      <CheckCircle2 className="w-8 h-8 text-green-400" />
                     </div>
-                    <CheckCircle2 className="w-8 h-8 text-green-400" />
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Create Reminder Card */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
-                className="lg:col-span-1"
-              >
-                <Card className="bg-white/90 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 shadow-2xl">
-                  <CardHeader>
-                    <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
-                      <Plus className="w-5 h-5" />
-                      {editingId ? "Edit Reminder" : "Create Reminder"}
-                    </CardTitle>
-                    <CardDescription className="text-gray-600 dark:text-white/60">
-                      {editingId
-                        ? "Update your reminder details"
-                        : "Set a new on-chain reminder"}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
-                      <label className="text-sm font-medium text-gray-700 dark:text-white/80 mb-2 block">
-                        Title *
-                      </label>
-                      <Input
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        placeholder="e.g., Governance vote deadline"
-                        className="bg-white/60 dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-700 dark:text-white/80 mb-2 block">
-                        Description
-                      </label>
-                      <Textarea
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        placeholder="Optional description or notes"
-                        rows={3}
-                        className="bg-white/60 dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-700 dark:text-white/80 mb-2 block">
-                        Date & Time *
-                      </label>
-                      <Input
-                        type="datetime-local"
-                        value={dateTime}
-                        onChange={(e) => setDateTime(e.target.value)}
-                        className="bg-white/60 dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white"
-                      />
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        onClick={
+              {/* Create/Edit Reminder Form */}
+              {(viewMode === "my" || viewMode === "templates") && (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="lg:col-span-1"
+                >
+                  <Card className="bg-white/90 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 shadow-2xl">
+                    <CardHeader>
+                      <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
+                        <Plus className="w-5 h-5" />
+                        {editingId ? "Edit Reminder" : "Create Reminder"}
+                      </CardTitle>
+                      <CardDescription className="text-gray-600 dark:text-white/60">
+                        {editingId
+                          ? "Update your reminder details"
+                          : "Set a new on-chain reminder"}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <ReminderForm
+                        title={title}
+                        description={description}
+                        dateTime={dateTime}
+                        recurrenceType={recurrenceType}
+                        recurrenceInterval={recurrenceInterval}
+                        category={category}
+                        priority={priority}
+                        tags={tags}
+                        isPublic={isPublic}
+                        templateId={selectedTemplate}
+                        onTitleChange={setTitle}
+                        onDescriptionChange={setDescription}
+                        onDateTimeChange={setDateTime}
+                        onRecurrenceTypeChange={setRecurrenceType}
+                        onRecurrenceIntervalChange={setRecurrenceInterval}
+                        onCategoryChange={setCategory}
+                        onPriorityChange={setPriority}
+                        onTagsChange={setTags}
+                        onIsPublicChange={setIsPublic}
+                        onSubmit={
                           editingId
                             ? () => handleUpdateReminder(editingId)
                             : handleCreateReminder
                         }
-                        disabled={
-                          !title ||
-                          !dateTime ||
-                          isPending ||
-                          isConfirming ||
-                          isCreating
-                        }
-                        className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0"
-                      >
-                        {isPending || isConfirming || isCreating ? (
-                          <>
-                            <motion.div
-                              animate={{ rotate: 360 }}
-                              transition={{
-                                duration: 1,
-                                repeat: Infinity,
-                                ease: "linear",
-                              }}
-                              className="w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"
-                            />
-                            Processing...
-                          </>
-                        ) : editingId ? (
-                          <>
-                            <Edit2 className="w-4 h-4 mr-2" />
-                            Update
-                          </>
-                        ) : (
-                          <>
-                            <Plus className="w-4 h-4 mr-2" />
-                            Create
-                          </>
-                        )}
-                      </Button>
-                      {editingId && (
-                        <Button
-                          variant="outline"
-                          onClick={cancelEditing}
-                          className="border-white/20 text-white hover:bg-white/10"
-                        >
-                          Cancel
-                        </Button>
-                      )}
-        </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              {/* Reminders List */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4 }}
-                className="lg:col-span-2 space-y-4"
-              >
-                {/* Overdue Reminders */}
-                {overdueReminders.length > 0 && (
-                  <div>
-                    <h2 className="text-xl font-semibold text-red-400 mb-3 flex items-center gap-2">
-                      <Zap className="w-5 h-5" />
-                      Overdue ({overdueReminders.length})
-                    </h2>
-                    <div className="space-y-3">
-                      <AnimatePresence>
-                        {overdueReminders.map((reminder) => (
-                          <ReminderCard
-                            key={reminder.id.toString()}
-                            reminder={reminder}
-                            onEdit={startEditing}
-                            onComplete={handleCompleteReminder}
-                            onDelete={handleDeleteReminder}
-                            formatDate={formatDate}
-                            getTimeUntil={getTimeUntil}
-                            isPending={isPending || isConfirming}
-                            variant="overdue"
-                          />
-                        ))}
-                      </AnimatePresence>
-                    </div>
-                  </div>
-                )}
-
-                {/* Pending Reminders */}
-                {pendingReminders.length > 0 && (
-                  <div>
-                    <h2 className="text-xl font-semibold text-blue-400 mb-3 flex items-center gap-2">
-                      <Clock className="w-5 h-5" />
-                      Pending ({pendingReminders.length})
-                    </h2>
-                    <div className="space-y-3">
-                      <AnimatePresence>
-                        {pendingReminders.map((reminder) => (
-                          <ReminderCard
-                            key={reminder.id.toString()}
-                            reminder={reminder}
-                            onEdit={startEditing}
-                            onComplete={handleCompleteReminder}
-                            onDelete={handleDeleteReminder}
-                            formatDate={formatDate}
-                            getTimeUntil={getTimeUntil}
-                            isPending={isPending || isConfirming}
-                            variant="pending"
-                          />
-                        ))}
-                      </AnimatePresence>
-                    </div>
-                  </div>
-                )}
-
-                {/* Completed Reminders */}
-                {completedReminders.length > 0 && (
-                  <div>
-                    <h2 className="text-xl font-semibold text-green-400 mb-3 flex items-center gap-2">
-                      <CheckCircle2 className="w-5 h-5" />
-                      Completed ({completedReminders.length})
-                    </h2>
-                    <div className="space-y-3">
-                      <AnimatePresence>
-                        {completedReminders.map((reminder) => (
-                          <ReminderCard
-                            key={reminder.id.toString()}
-                            reminder={reminder}
-                            onEdit={startEditing}
-                            onComplete={handleCompleteReminder}
-                            onDelete={handleDeleteReminder}
-                            formatDate={formatDate}
-                            getTimeUntil={getTimeUntil}
-                            isPending={isPending || isConfirming}
-                            variant="completed"
-                          />
-                        ))}
-                      </AnimatePresence>
-                    </div>
-                  </div>
-                )}
-
-                {/* Empty State */}
-                {(!reminders ||
-                  reminders.filter((r) => r.exists).length === 0) && (
-                  <Card className="bg-white/90 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 shadow-lg">
-                    <CardContent className="p-12 text-center">
-                      <motion.div
-                        animate={{ scale: [1, 1.1, 1] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                      >
-                        <Bell className="w-16 h-16 text-gray-400 dark:text-white/40 mx-auto mb-4" />
-                      </motion.div>
-                      <p className="text-gray-700 dark:text-white/60 text-lg">
-                        No reminders yet
-                      </p>
-                      <p className="text-gray-500 dark:text-white/40 text-sm mt-2">
-                        Create your first reminder to get started!
-                      </p>
+                        onCancel={editingId ? resetForm : undefined}
+                        isSubmitting={isPending || isConfirming || isCreating}
+                        submitLabel={editingId ? "Update" : "Create"}
+                      />
                     </CardContent>
                   </Card>
-                )}
-              </motion.div>
+                </motion.div>
+              )}
+
+              {/* Reminders List */}
+              {viewMode !== "stats" && viewMode !== "templates" && (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className={
+                    viewMode === "my" || viewMode === "templates"
+                      ? "lg:col-span-2"
+                      : "lg:col-span-3"
+                  }
+                >
+                  <div className="space-y-4">
+                    {overdueReminders.length > 0 && (
+                      <div>
+                        <h2 className="text-xl font-semibold text-red-400 mb-3 flex items-center gap-2">
+                          <Zap className="w-5 h-5" />
+                          Overdue ({overdueReminders.length})
+                        </h2>
+                        <div className="space-y-3">
+                          <AnimatePresence>
+                            {overdueReminders.map((reminder) => (
+                              <EnhancedReminderCard
+                                key={reminder.id.toString()}
+                                reminder={reminder}
+                                onEdit={startEditing}
+                                onComplete={handleCompleteReminder}
+                                onDelete={handleDeleteReminder}
+                                onAddParticipant={handleAddParticipant}
+                                formatDate={formatDate}
+                                getTimeUntil={getTimeUntil}
+                                isPending={isPending || isConfirming}
+                                variant="overdue"
+                                currentAddress={address}
+                              />
+                            ))}
+                          </AnimatePresence>
+                        </div>
+                      </div>
+                    )}
+
+                    {pendingReminders.length > 0 && (
+                      <div>
+                        <h2 className="text-xl font-semibold text-blue-400 mb-3 flex items-center gap-2">
+                          <Clock className="w-5 h-5" />
+                          Pending ({pendingReminders.length})
+                        </h2>
+                        <div className="space-y-3">
+                          <AnimatePresence>
+                            {pendingReminders.map((reminder) => (
+                              <EnhancedReminderCard
+                                key={reminder.id.toString()}
+                                reminder={reminder}
+                                onEdit={startEditing}
+                                onComplete={handleCompleteReminder}
+                                onDelete={handleDeleteReminder}
+                                onAddParticipant={handleAddParticipant}
+                                formatDate={formatDate}
+                                getTimeUntil={getTimeUntil}
+                                isPending={isPending || isConfirming}
+                                variant="pending"
+                                currentAddress={address}
+                              />
+                            ))}
+                          </AnimatePresence>
+                        </div>
+                      </div>
+                    )}
+
+                    {completedReminders.length > 0 && (
+                      <div>
+                        <h2 className="text-xl font-semibold text-green-400 mb-3 flex items-center gap-2">
+                          <CheckCircle2 className="w-5 h-5" />
+                          Completed ({completedReminders.length})
+                        </h2>
+                        <div className="space-y-3">
+                          <AnimatePresence>
+                            {completedReminders.map((reminder) => (
+                              <EnhancedReminderCard
+                                key={reminder.id.toString()}
+                                reminder={reminder}
+                                onEdit={startEditing}
+                                onComplete={handleCompleteReminder}
+                                onDelete={handleDeleteReminder}
+                                onAddParticipant={handleAddParticipant}
+                                formatDate={formatDate}
+                                getTimeUntil={getTimeUntil}
+                                isPending={isPending || isConfirming}
+                                variant="completed"
+                                currentAddress={address}
+                              />
+                            ))}
+                          </AnimatePresence>
+                        </div>
+                      </div>
+                    )}
+
+                    {(!displayReminders ||
+                      displayReminders.filter((r) => r.exists).length ===
+                        0) && (
+                      <Card className="bg-white/90 dark:bg-white/10 backdrop-blur-lg">
+                        <CardContent className="p-12 text-center">
+                          <Bell className="w-16 h-16 text-gray-400 dark:text-white/40 mx-auto mb-4" />
+                          <p className="text-gray-700 dark:text-white/60 text-lg">
+                            No reminders yet
+                          </p>
+                          <p className="text-gray-500 dark:text-white/40 text-sm mt-2">
+                            {viewMode === "public"
+                              ? "No public reminders available"
+                              : "Create your first reminder to get started!"}
+                          </p>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </div>
+                </motion.div>
+              )}
             </div>
           </>
         )}
-        </div>
+      </div>
     </div>
   );
 }
 
-function ReminderCard({
+function EnhancedReminderCard({
   reminder,
   onEdit,
   onComplete,
   onDelete,
+  onAddParticipant,
   formatDate,
   getTimeUntil,
   isPending,
   variant,
+  currentAddress,
 }: {
   reminder: Reminder;
   onEdit: (reminder: Reminder) => void;
   onComplete: (id: bigint) => void;
   onDelete: (id: bigint) => void;
+  onAddParticipant: (id: bigint, address: string) => void;
   formatDate: (timestamp: bigint) => string;
   getTimeUntil: (timestamp: bigint) => string;
   isPending: boolean;
   variant: "pending" | "overdue" | "completed";
+  currentAddress: string | undefined;
 }) {
+  const [showParticipantInput, setShowParticipantInput] = useState(false);
+  const [participantAddress, setParticipantAddress] = useState("");
+
   const getVariantStyles = () => {
     switch (variant) {
       case "overdue":
@@ -685,6 +841,9 @@ function ReminderCard({
         return "bg-blue-500/20 border-blue-500/50";
     }
   };
+
+  const isOwner =
+    reminder.owner.toLowerCase() === currentAddress?.toLowerCase();
 
   return (
     <motion.div
@@ -700,7 +859,7 @@ function ReminderCard({
         <CardContent className="p-4">
           <div className="flex justify-between items-start gap-4">
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <h3
                   className={`font-semibold text-gray-900 dark:text-white ${
                     variant === "completed" ? "line-through" : ""
@@ -708,6 +867,30 @@ function ReminderCard({
                 >
                   {reminder.title}
                 </h3>
+                {reminder.isPublic && (
+                  <Badge variant="secondary" className="bg-blue-500/50">
+                    <Eye className="w-3 h-3 mr-1" />
+                    Public
+                  </Badge>
+                )}
+                {reminder.isShared && (
+                  <Badge variant="secondary" className="bg-purple-500/50">
+                    <Users className="w-3 h-3 mr-1" />
+                    Shared
+                  </Badge>
+                )}
+                {reminder.recurrenceType !== RecurrenceType.None && (
+                  <Badge variant="secondary" className="bg-green-500/50">
+                    <Repeat className="w-3 h-3 mr-1" />
+                    {getRecurrenceLabel(reminder.recurrenceType)}
+                  </Badge>
+                )}
+                <Badge className={getCategoryColor(reminder.category)}>
+                  {getCategoryLabel(reminder.category)}
+                </Badge>
+                <Badge className={getPriorityColor(reminder.priority)}>
+                  {getPriorityLabel(reminder.priority)}
+                </Badge>
                 {variant === "overdue" && (
                   <Badge
                     variant="destructive"
@@ -728,7 +911,17 @@ function ReminderCard({
                   {reminder.description}
                 </p>
               )}
-              <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-white/60">
+              {reminder.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1 mb-3">
+                  {reminder.tags.map((tag, idx) => (
+                    <Badge key={idx} variant="outline" className="text-xs">
+                      <Tag className="w-2 h-2 mr-1" />
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+              <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-white/60 flex-wrap">
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
                   {formatDate(reminder.timestamp)}
@@ -739,25 +932,64 @@ function ReminderCard({
                     {getTimeUntil(reminder.timestamp)}
                   </div>
                 )}
+                {reminder.participants.length > 0 && (
+                  <div className="flex items-center gap-1">
+                    <Users className="w-4 h-4" />
+                    {reminder.participants.length} participant
+                    {reminder.participants.length > 1 ? "s" : ""}
+                  </div>
+                )}
               </div>
+              {isOwner && reminder.isShared && showParticipantInput && (
+                <div className="mt-3 flex gap-2">
+                  <input
+                    type="text"
+                    value={participantAddress}
+                    onChange={(e) => setParticipantAddress(e.target.value)}
+                    placeholder="0x..."
+                    className="flex-1 px-3 py-2 bg-white/60 dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-md text-sm"
+                  />
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      onAddParticipant(reminder.id, participantAddress);
+                      setParticipantAddress("");
+                      setShowParticipantInput(false);
+                    }}
+                  >
+                    Add
+                  </Button>
+                </div>
+              )}
             </div>
-            {variant !== "completed" && (
+            {variant !== "completed" && isOwner && (
               <div className="flex gap-2">
                 <Button
                   size="sm"
                   variant="ghost"
                   onClick={() => onEdit(reminder)}
                   disabled={isPending}
-                  className="text-gray-700 dark:text-white/80 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10"
                 >
                   <Edit2 className="w-4 h-4" />
                 </Button>
+                {reminder.isShared && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() =>
+                      setShowParticipantInput(!showParticipantInput)
+                    }
+                    disabled={isPending}
+                  >
+                    <Users className="w-4 h-4" />
+                  </Button>
+                )}
                 <Button
                   size="sm"
                   variant="ghost"
                   onClick={() => onComplete(reminder.id)}
                   disabled={isPending}
-                  className="text-green-400 hover:text-green-300 hover:bg-green-500/20"
+                  className="text-green-400 hover:text-green-300"
                 >
                   <CheckCircle2 className="w-4 h-4" />
                 </Button>
@@ -766,19 +998,19 @@ function ReminderCard({
                   variant="ghost"
                   onClick={() => onDelete(reminder.id)}
                   disabled={isPending}
-                  className="text-red-400 hover:text-red-300 hover:bg-red-500/20"
+                  className="text-red-400 hover:text-red-300"
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
               </div>
             )}
-            {variant === "completed" && (
+            {variant === "completed" && isOwner && (
               <Button
                 size="sm"
                 variant="ghost"
                 onClick={() => onDelete(reminder.id)}
                 disabled={isPending}
-                className="text-red-400 hover:text-red-300 hover:bg-red-500/20"
+                className="text-red-400 hover:text-red-300"
               >
                 <Trash2 className="w-4 h-4" />
               </Button>
