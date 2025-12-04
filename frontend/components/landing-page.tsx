@@ -49,10 +49,10 @@ export function LandingPage() {
             </motion.div>
           </div>
           
-          <p className="text-2xl md:text-3xl font-semibold text-gray-800 dark:text-white/90 mb-4">
+          <p className="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-800 dark:text-white/90 mb-4 px-4">
             On-chain reminder system for wallet users
           </p>
-          <p className="text-lg md:text-xl text-gray-600 dark:text-white/70 mb-8 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-white/70 mb-8 max-w-2xl mx-auto px-4">
             Never miss a governance vote, token unlock, or important date again. 
             Built with React, Next.js, and Solidity for the Web3 ecosystem.
           </p>
@@ -110,10 +110,10 @@ export function LandingPage() {
           viewport={{ once: true }}
           className="mb-20"
         >
-          <h2 className="text-4xl font-bold text-center mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent px-4">
             ✨ Features
           </h2>
-          <p className="text-center text-gray-600 dark:text-white/70 mb-12 text-lg">
+          <p className="text-center text-gray-600 dark:text-white/70 mb-12 text-base sm:text-lg px-4">
             Everything you need to stay organized on-chain
           </p>
 
@@ -266,10 +266,10 @@ export function LandingPage() {
 
         {/* Smart Contract Section */}
         <section className="mb-20">
-          <h2 className="text-4xl font-bold text-center mb-4 bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent px-4">
             🔗 Smart Contract
           </h2>
-          <p className="text-center text-gray-600 dark:text-white/70 mb-8 text-lg">
+          <p className="text-center text-gray-600 dark:text-white/70 mb-8 text-base sm:text-lg px-4">
             Deployed and verified on Base blockchain
           </p>
 
@@ -343,10 +343,10 @@ export function LandingPage() {
         >
           <Card className="bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-cyan-500/20 border-purple-500/50 dark:border-purple-500/30 backdrop-blur-lg">
             <CardContent className="p-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-pink-400 bg-clip-text text-transparent">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-pink-400 bg-clip-text text-transparent px-4">
                 Ready to get started?
               </h2>
-              <p className="text-lg text-gray-700 dark:text-white/80 mb-8 max-w-2xl mx-auto">
+              <p className="text-base sm:text-lg text-gray-700 dark:text-white/80 mb-8 max-w-2xl mx-auto px-4">
                 Connect your wallet and start creating on-chain reminders today. 
                 Never miss an important date again!
               </p>
@@ -363,7 +363,7 @@ export function LandingPage() {
 
         {/* Tech Stack Section */}
         <section className="mb-20">
-          <h2 className="text-4xl font-bold text-center mb-4 bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent px-4">
             🛠️ Tech Stack
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
