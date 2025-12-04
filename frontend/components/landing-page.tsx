@@ -2,7 +2,8 @@
 
 import { motion } from "framer-motion";
 import { AppKitButton } from "@reown/appkit/react";
-import { Bell, Sparkles, Shield, Zap, Wallet, Globe, Smartphone } from "lucide-react";
+import { Bell, Sparkles, Shield, Zap, Wallet, Globe, Smartphone, ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function LandingPage() {
@@ -154,6 +155,76 @@ export function LandingPage() {
                 <CardDescription className="text-gray-600 dark:text-white/70">
                   Works perfectly on desktop and mobile
                 </CardDescription>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
+        {/* Smart Contract Section */}
+        <section className="mb-20">
+          <h2 className="text-4xl font-bold text-center mb-4 bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+            🔗 Smart Contract
+          </h2>
+          <p className="text-center text-gray-600 dark:text-white/70 mb-8 text-lg">
+            Deployed and verified on Base blockchain
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+                  <Globe className="w-5 h-5 text-blue-400" />
+                  Base Mainnet
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="font-mono text-sm text-gray-700 dark:text-white/80 mb-4 break-all">
+                  0xfe4a4d81E4f0F17CA959b07D39Ab18493efc4B0C
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  asChild
+                >
+                  <a
+                    href="https://basescan.org/address/0xfe4a4d81E4f0F17CA959b07D39Ab18493efc4B0C"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    View on Explorer
+                    <ExternalLink className="ml-2 w-4 h-4" />
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+                  <Globe className="w-5 h-5 text-blue-400" />
+                  Base Sepolia
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="font-mono text-sm text-gray-700 dark:text-white/80 mb-4 break-all">
+                  0x8Eec6d38AB8fd67A13787C7dF79B953d4FD1810C
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  asChild
+                >
+                  <a
+                    href="https://sepolia.basescan.org/address/0x8Eec6d38AB8fd67A13787C7dF79B953d4FD1810C"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    View on Explorer
+                    <ExternalLink className="ml-2 w-4 h-4" />
+                  </a>
+                </Button>
               </CardContent>
             </Card>
           </div>
