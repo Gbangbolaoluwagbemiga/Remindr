@@ -165,25 +165,21 @@ export function ReminderForm({
         <label className="text-sm font-medium text-gray-700 dark:text-white/80 mb-2 block">
           Recurrence
         </label>
-        <Select
+        <select
           value={recurrenceType.toString()}
-          onValueChange={(value) =>
-            onRecurrenceTypeChange(Number(value) as RecurrenceType)
+          onChange={(e) =>
+            onRecurrenceTypeChange(Number(e.target.value) as RecurrenceType)
           }
+          className="w-full px-3 py-2 bg-white/60 dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-md text-gray-900 dark:text-white"
         >
-          <SelectTrigger className="bg-white/60 dark:bg-white/10 border-gray-300 dark:border-white/20 text-gray-900 dark:text-white">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.values(RecurrenceType)
-              .filter((v) => typeof v === "number")
-              .map((rec) => (
-                <SelectItem key={rec} value={rec.toString()}>
-                  {getRecurrenceLabel(rec as RecurrenceType)}
-                </SelectItem>
-              ))}
-          </SelectContent>
-        </Select>
+          {Object.values(RecurrenceType)
+            .filter((v) => typeof v === "number")
+            .map((rec) => (
+              <option key={rec} value={rec.toString()}>
+                {getRecurrenceLabel(rec as RecurrenceType)}
+              </option>
+            ))}
+        </select>
         {recurrenceType === RecurrenceType.Custom && (
           <Input
             type="number"
