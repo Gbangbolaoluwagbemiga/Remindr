@@ -3,9 +3,9 @@ import remindrAbi from "./remindr_abi.json";
 
 export const REMINDR_ABI = remindrAbi as any;
 
-// Contract address on Base Mainnet
+// Contract address on Base Mainnet (Updated with new enhanced contract)
 export const REMINDR_ADDRESS =
-  "0xfe4a4d81E4f0F17CA959b07D39Ab18493efc4B0C" as const;
+  "0xdB80F03692e45dd0be64E54FBD3d824Fdb64e9f7" as const;
 
 // Enums matching the contract
 export enum RecurrenceType {
