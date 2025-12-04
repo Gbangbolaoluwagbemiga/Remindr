@@ -59,7 +59,6 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { useReminderNotifications } from "@/hooks/useReminderNotifications";
 import { ReminderForm } from "@/components/reminder-form";
 import { LandingPage } from "@/components/landing-page";
-import { LandingPage } from "@/components/landing-page";
 
 type ViewMode = "my" | "public" | "templates" | "stats";
 
