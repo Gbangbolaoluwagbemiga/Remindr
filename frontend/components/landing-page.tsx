@@ -7,6 +7,45 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
+const features = [
+  {
+    icon: Shield,
+    title: "On-chain Storage",
+    description: "Reminders stored permanently on Base blockchain",
+    color: "text-blue-400",
+  },
+  {
+    icon: Zap,
+    title: "Gas Optimized",
+    description: "Efficient smart contract design",
+    color: "text-yellow-400",
+  },
+  {
+    icon: Bell,
+    title: "Smart Notifications",
+    description: "Browser notifications + in-app toast alerts",
+    color: "text-purple-400",
+  },
+  {
+    icon: Wallet,
+    title: "Wallet Integration",
+    description: "Reown (WalletConnect) AppKit for easy connection",
+    color: "text-green-400",
+  },
+  {
+    icon: Globe,
+    title: "Multi-chain Support",
+    description: "Deployable on Base and Celo networks",
+    color: "text-cyan-400",
+  },
+  {
+    icon: Smartphone,
+    title: "Responsive Design",
+    description: "Works perfectly on desktop and mobile",
+    color: "text-pink-400",
+  },
+];
+
 export function LandingPage() {
   return (
     <div className="min-h-screen bg-smooth-gradient relative overflow-hidden">
@@ -118,149 +157,32 @@ export function LandingPage() {
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0 }}
-              whileHover={{ scale: 1.05 }}
-            >
-              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl hover:shadow-purple-500/20 dark:hover:shadow-purple-500/30 transition-all duration-300">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
-                  <Shield className="w-6 h-6 text-blue-400" />
-                </div>
-                <CardTitle className="text-gray-900 dark:text-white">
-                  On-chain Storage
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-gray-600 dark:text-white/70">
-                  Reminders stored permanently on Base blockchain
-                </CardDescription>
-              </CardContent>
-            </Card>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              whileHover={{ scale: 1.05 }}
-            >
-              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl hover:shadow-purple-500/20 dark:hover:shadow-purple-500/30 transition-all duration-300">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
-                    <Zap className="w-6 h-6 text-yellow-400" />
-                  </div>
-                  <CardTitle className="text-gray-900 dark:text-white">
-                    Gas Optimized
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-gray-600 dark:text-white/70">
-                    Efficient smart contract design
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              whileHover={{ scale: 1.05 }}
-            >
-              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl hover:shadow-purple-500/20 dark:hover:shadow-purple-500/30 transition-all duration-300">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
-                    <Bell className="w-6 h-6 text-purple-400" />
-                  </div>
-                  <CardTitle className="text-gray-900 dark:text-white">
-                    Smart Notifications
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-gray-600 dark:text-white/70">
-                    Browser notifications + in-app toast alerts
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              whileHover={{ scale: 1.05 }}
-            >
-              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl hover:shadow-purple-500/20 dark:hover:shadow-purple-500/30 transition-all duration-300">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
-                    <Wallet className="w-6 h-6 text-green-400" />
-                  </div>
-                  <CardTitle className="text-gray-900 dark:text-white">
-                    Wallet Integration
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-gray-600 dark:text-white/70">
-                    Reown (WalletConnect) AppKit for easy connection
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4 }}
-              whileHover={{ scale: 1.05 }}
-            >
-              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl hover:shadow-purple-500/20 dark:hover:shadow-purple-500/30 transition-all duration-300">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
-                    <Globe className="w-6 h-6 text-cyan-400" />
-                  </div>
-                  <CardTitle className="text-gray-900 dark:text-white">
-                    Multi-chain Support
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-gray-600 dark:text-white/70">
-                    Deployable on Base and Celo networks
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.5 }}
-              whileHover={{ scale: 1.05 }}
-            >
-              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl hover:shadow-purple-500/20 dark:hover:shadow-purple-500/30 transition-all duration-300">
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
-                    <Smartphone className="w-6 h-6 text-pink-400" />
-                  </div>
-                  <CardTitle className="text-gray-900 dark:text-white">
-                    Responsive Design
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-gray-600 dark:text-white/70">
-                    Works perfectly on desktop and mobile
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            </motion.div>
+            {features.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ scale: 1.05 }}
+              >
+                <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl hover:shadow-purple-500/20 dark:hover:shadow-purple-500/30 transition-all duration-300">
+                  <CardHeader>
+                    <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
+                      <feature.icon className={`w-6 h-6 ${feature.color}`} />
+                    </div>
+                    <CardTitle className="text-gray-900 dark:text-white">
+                      {feature.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-gray-600 dark:text-white/70">
+                      {feature.description}
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </div>
         </motion.section>
 
