@@ -284,6 +284,33 @@ export function LandingPage() {
           </div>
         </section>
 
+        {/* CTA Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-20"
+        >
+          <Card className="bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-cyan-500/20 border-purple-500/50 dark:border-purple-500/30 backdrop-blur-lg">
+            <CardContent className="p-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-pink-400 bg-clip-text text-transparent">
+                Ready to get started?
+              </h2>
+              <p className="text-lg text-gray-700 dark:text-white/80 mb-8 max-w-2xl mx-auto">
+                Connect your wallet and start creating on-chain reminders today. 
+                Never miss an important date again!
+              </p>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="inline-block"
+              >
+                <AppKitButton />
+              </motion.div>
+            </CardContent>
+          </Card>
+        </motion.section>
+
         {/* Tech Stack Section */}
         <section className="mb-20">
           <h2 className="text-4xl font-bold text-center mb-4 bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
