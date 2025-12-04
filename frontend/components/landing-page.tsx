@@ -53,7 +53,13 @@ export function LandingPage() {
         </motion.div>
 
         {/* Features Section */}
-        <section className="mb-20">
+        <motion.section
+          id="features"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="mb-20"
+        >
           <h2 className="text-4xl font-bold text-center mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
             ✨ Features
           </h2>
@@ -62,7 +68,14 @@ export function LandingPage() {
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0 }}
+              whileHover={{ scale: 1.05 }}
+            >
+              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl transition-shadow">
               <CardHeader>
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
                   <Shield className="w-6 h-6 text-blue-400" />
@@ -77,88 +90,129 @@ export function LandingPage() {
                 </CardDescription>
               </CardContent>
             </Card>
+            </motion.div>
 
-            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
-                  <Zap className="w-6 h-6 text-yellow-400" />
-                </div>
-                <CardTitle className="text-gray-900 dark:text-white">
-                  Gas Optimized
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-gray-600 dark:text-white/70">
-                  Efficient smart contract design
-                </CardDescription>
-              </CardContent>
-            </Card>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              whileHover={{ scale: 1.05 }}
+            >
+              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl transition-shadow">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
+                    <Zap className="w-6 h-6 text-yellow-400" />
+                  </div>
+                  <CardTitle className="text-gray-900 dark:text-white">
+                    Gas Optimized
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-gray-600 dark:text-white/70">
+                    Efficient smart contract design
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            </motion.div>
 
-            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
-                  <Bell className="w-6 h-6 text-purple-400" />
-                </div>
-                <CardTitle className="text-gray-900 dark:text-white">
-                  Smart Notifications
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-gray-600 dark:text-white/70">
-                  Browser notifications + in-app toast alerts
-                </CardDescription>
-              </CardContent>
-            </Card>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              whileHover={{ scale: 1.05 }}
+            >
+              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl transition-shadow">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
+                    <Bell className="w-6 h-6 text-purple-400" />
+                  </div>
+                  <CardTitle className="text-gray-900 dark:text-white">
+                    Smart Notifications
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-gray-600 dark:text-white/70">
+                    Browser notifications + in-app toast alerts
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            </motion.div>
 
-            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
-                  <Wallet className="w-6 h-6 text-green-400" />
-                </div>
-                <CardTitle className="text-gray-900 dark:text-white">
-                  Wallet Integration
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-gray-600 dark:text-white/70">
-                  Reown (WalletConnect) AppKit for easy connection
-                </CardDescription>
-              </CardContent>
-            </Card>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              whileHover={{ scale: 1.05 }}
+            >
+              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl transition-shadow">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
+                    <Wallet className="w-6 h-6 text-green-400" />
+                  </div>
+                  <CardTitle className="text-gray-900 dark:text-white">
+                    Wallet Integration
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-gray-600 dark:text-white/70">
+                    Reown (WalletConnect) AppKit for easy connection
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            </motion.div>
 
-            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
-                  <Globe className="w-6 h-6 text-cyan-400" />
-                </div>
-                <CardTitle className="text-gray-900 dark:text-white">
-                  Multi-chain Support
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-gray-600 dark:text-white/70">
-                  Deployable on Base and Celo networks
-                </CardDescription>
-              </CardContent>
-            </Card>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+              whileHover={{ scale: 1.05 }}
+            >
+              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl transition-shadow">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
+                    <Globe className="w-6 h-6 text-cyan-400" />
+                  </div>
+                  <CardTitle className="text-gray-900 dark:text-white">
+                    Multi-chain Support
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-gray-600 dark:text-white/70">
+                    Deployable on Base and Celo networks
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            </motion.div>
 
-            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20">
-              <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
-                  <Smartphone className="w-6 h-6 text-pink-400" />
-                </div>
-                <CardTitle className="text-gray-900 dark:text-white">
-                  Responsive Design
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-gray-600 dark:text-white/70">
-                  Works perfectly on desktop and mobile
-                </CardDescription>
-              </CardContent>
-            </Card>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.5 }}
+              whileHover={{ scale: 1.05 }}
+            >
+              <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 h-full hover:shadow-xl transition-shadow">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
+                    <Smartphone className="w-6 h-6 text-pink-400" />
+                  </div>
+                  <CardTitle className="text-gray-900 dark:text-white">
+                    Responsive Design
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-gray-600 dark:text-white/70">
+                    Works perfectly on desktop and mobile
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            </motion.div>
           </div>
-        </section>
+        </motion.section>
 
         {/* Smart Contract Section */}
         <section className="mb-20">
