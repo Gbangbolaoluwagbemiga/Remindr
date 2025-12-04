@@ -58,6 +58,8 @@ import {
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useReminderNotifications } from "@/hooks/useReminderNotifications";
 import { ReminderForm } from "@/components/reminder-form";
+import { LandingPage } from "@/components/landing-page";
+import { LandingPage } from "@/components/landing-page";
 
 type ViewMode = "my" | "public" | "templates" | "stats";
 
@@ -323,6 +325,18 @@ export default function Home() {
   const pendingReminders = activeReminders.filter((r) => !isPast(r.timestamp));
   const overdueReminders = activeReminders.filter((r) => isPast(r.timestamp));
 
+  // Show landing page when not connected
+  if (!isConnected) {
+    return (
+      <>
+        <div className="absolute top-4 right-4 z-20">
+          <ThemeToggle />
+        </div>
+        <LandingPage />
+      </>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-smooth-gradient relative overflow-hidden transition-colors duration-500">
       {/* Animated background */}
@@ -376,45 +390,29 @@ export default function Home() {
             features
           </p>
 
-          {!isConnected ? (
-            <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              className="flex flex-col items-center gap-4"
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex items-center justify-center gap-4"
+          >
+            <Badge
+              variant="secondary"
+              className="bg-green-500 dark:bg-green-500/20 text-white dark:text-green-300 border-green-600 dark:border-green-500/50 shadow-md px-3 py-1.5"
             >
-              <div className="flex items-center gap-2 dark:text-white/60 text-gray-600 mb-2">
-                <Wallet className="w-5 h-5" />
-                <span>Connect your wallet to get started</span>
-              </div>
-              <div className="scale-125">
-                <AppKitButton />
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex items-center justify-center gap-4"
+              <div className="w-2 h-2 bg-white dark:bg-green-400 rounded-full mr-2 animate-pulse" />
+              Connected
+            </Badge>
+            <span className="dark:text-white/60 text-gray-700 font-mono text-sm font-medium bg-white/60 dark:bg-white/10 px-3 py-1.5 rounded-md backdrop-blur-sm border border-gray-200 dark:border-white/20">
+              {address?.slice(0, 6)}...{address?.slice(-4)}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => open({ view: "Account" })}
             >
-              <Badge
-                variant="secondary"
-                className="bg-green-500 dark:bg-green-500/20 text-white dark:text-green-300 border-green-600 dark:border-green-500/50 shadow-md px-3 py-1.5"
-              >
-                <div className="w-2 h-2 bg-white dark:bg-green-400 rounded-full mr-2 animate-pulse" />
-                Connected
-              </Badge>
-              <span className="dark:text-white/60 text-gray-700 font-mono text-sm font-medium bg-white/60 dark:bg-white/10 px-3 py-1.5 rounded-md backdrop-blur-sm border border-gray-200 dark:border-white/20">
-                {address?.slice(0, 6)}...{address?.slice(-4)}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => open({ view: "Account" })}
-              >
-                Manage
-              </Button>
-            </motion.div>
-          )}
+              Manage
+            </Button>
+          </motion.div>
         </motion.div>
 
         {isConnected && (
