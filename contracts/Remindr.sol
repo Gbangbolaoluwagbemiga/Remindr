@@ -149,8 +149,8 @@ contract Remindr {
 
     // Modifiers
     modifier onlyReminderOwner(uint256 _id) {
-        require(reminders[_id].exists, "Reminder does not exist");
-        require(reminders[_id].owner == msg.sender, "Not the owner");
+        require(reminders[_id].exists);
+        require(reminders[_id].owner == msg.sender);
         _;
     }
 
@@ -158,8 +158,7 @@ contract Remindr {
         require(reminders[_id].exists, "Reminder does not exist");
         require(
             reminders[_id].owner == msg.sender || 
-            isParticipant(_id, msg.sender),
-            "Not authorized"
+            isParticipant(_id, msg.sender)
         );
         _;
     }
@@ -219,9 +218,9 @@ contract Remindr {
         string[] memory _tags,
         uint256 _templateId
     ) internal {
-        require(bytes(_title).length > 0, "Title cannot be empty");
-        require(_timestamp > block.timestamp, "Timestamp must be in the future");
-        require(_tags.length <= MAX_TAGS, "Too many tags");
+        require(bytes(_title).length > 0);
+        require(_timestamp > block.timestamp);
+        require(_tags.length <= MAX_TAGS);
         
         reminderCounter++;
         uint256 newId = reminderCounter;
@@ -277,7 +276,7 @@ contract Remindr {
         RecurrenceType _recurrenceType,
         bool _isPublic
     ) external {
-        require(templates[_templateId].exists, "Template does not exist");
+        require(templates[_templateId].exists);
         Template memory template = templates[_templateId];
         
         _createReminderInternal(
@@ -298,9 +297,9 @@ contract Remindr {
      * @notice Add participants to a reminder (make it shared)
      */
     function addParticipant(uint256 _id, address _participant) external onlyReminderOwner(_id) {
-        require(!isParticipant(_id, _participant), "Already a participant");
-        require(_participant != reminders[_id].owner, "Owner cannot be added as participant");
-        require(reminders[_id].participants.length < MAX_PARTICIPANTS, "Too many participants");
+        require(!isParticipant(_id, _participant));
+        require(_participant != reminders[_id].owner);
+        require(reminders[_id].participants.length < MAX_PARTICIPANTS);
         
         reminders[_id].participants.push(_participant);
         reminders[_id].isShared = true;
@@ -315,7 +314,7 @@ contract Remindr {
      * @notice Remove a participant from a reminder
      */
     function removeParticipant(uint256 _id, address _participant) external onlyReminderOwner(_id) {
-        require(isParticipant(_id, _participant), "Not a participant");
+        require(isParticipant(_id, _participant));
         
         address[] storage participants = reminders[_id].participants;
         for (uint256 i = 0; i < participants.length; i++) {
@@ -369,7 +368,7 @@ contract Remindr {
         string[] memory _tags
     ) external onlyReminderOwner(_id) {
         require(!reminders[_id].isCompleted, "Cannot update completed reminder");
-        require(_tags.length <= MAX_TAGS, "Too many tags");
+        require(_tags.length <= MAX_TAGS);
         
         if (bytes(_title).length > 0) {
             reminders[_id].title = _title;
@@ -380,7 +379,7 @@ contract Remindr {
         }
         
         if (_timestamp > 0) {
-            require(_timestamp > block.timestamp, "Timestamp must be in the future");
+            require(_timestamp > block.timestamp);
             reminders[_id].timestamp = _timestamp;
             reminders[_id].nextOccurrence = _calculateNextOccurrence(
                 _timestamp,
@@ -450,7 +449,7 @@ contract Remindr {
 
     // View Functions
     function getReminder(uint256 _id) external view returns (Reminder memory) {
-        require(reminders[_id].exists, "Reminder does not exist");
+        require(reminders[_id].exists);
         return reminders[_id];
     }
 
