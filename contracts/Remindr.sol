@@ -190,6 +190,35 @@ contract Remindr {
         string[] memory _tags,
         uint256 _templateId
     ) external {
+        _createReminderInternal(
+            _title,
+            _description,
+            _timestamp,
+            _recurrenceType,
+            _recurrenceInterval,
+            _isPublic,
+            _category,
+            _priority,
+            _tags,
+            _templateId
+        );
+    }
+
+    /**
+     * @notice Internal function to create a reminder
+     */
+    function _createReminderInternal(
+        string memory _title,
+        string memory _description,
+        uint256 _timestamp,
+        RecurrenceType _recurrenceType,
+        uint256 _recurrenceInterval,
+        bool _isPublic,
+        Category _category,
+        ReminderPriority _priority,
+        string[] memory _tags,
+        uint256 _templateId
+    ) internal {
         require(bytes(_title).length > 0, "Title cannot be empty");
         require(_timestamp > block.timestamp, "Timestamp must be in the future");
         require(_tags.length <= MAX_TAGS, "Too many tags");
