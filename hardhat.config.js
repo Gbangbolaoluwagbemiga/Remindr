@@ -8,7 +8,7 @@ module.exports = {
     settings: {
       optimizer: {
         enabled: true,
-        runs: 200,
+        runs: 100, // Reduced for smaller contract size
       },
       viaIR: true, // Enable IR-based compilation to handle stack too deep
     },
