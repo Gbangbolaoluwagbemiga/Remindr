@@ -9,7 +9,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 export function LandingPage() {
   return (
     <div className="min-h-screen bg-smooth-gradient relative overflow-hidden">
-      <div className="relative z-10 container mx-auto px-4 py-12 max-w-7xl">
+      {/* Animated background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.div
+          className="absolute -top-40 -right-40 w-[32rem] h-[32rem] dark:bg-purple-600 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl dark:opacity-20 opacity-25 animate-blob"
+          animate={{ x: [0, 100, 0], y: [0, 100, 0] }}
+          transition={{ duration: 20, repeat: Infinity, repeatType: "reverse" }}
+        />
+        <motion.div
+          className="absolute -bottom-40 -left-40 w-[32rem] h-[32rem] dark:bg-cyan-600 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl dark:opacity-18 opacity-25 animate-blob animation-delay-2000"
+          animate={{ x: [0, -100, 0], y: [0, -100, 0] }}
+          transition={{ duration: 20, repeat: Infinity, repeatType: "reverse" }}
+        />
+      </div>
+
+      <div className="relative z-10 container mx-auto px-4 py-12 md:py-16 max-w-7xl">
         {/* Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -67,7 +81,7 @@ export function LandingPage() {
             Everything you need to stay organized on-chain
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -223,7 +237,7 @@ export function LandingPage() {
             Deployed and verified on Base blockchain
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
             <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
