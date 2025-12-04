@@ -415,9 +415,7 @@ export default function Home() {
           </motion.div>
         </motion.div>
 
-        {isConnected && (
-          <>
-            {/* View Mode Tabs */}
+        {/* View Mode Tabs */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -796,8 +794,6 @@ export default function Home() {
                 </motion.div>
               )}
             </div>
-          </>
-        )}
       </div>
     </div>
   );
