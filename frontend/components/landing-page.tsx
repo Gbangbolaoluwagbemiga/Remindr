@@ -2,7 +2,8 @@
 
 import { motion } from "framer-motion";
 import { AppKitButton } from "@reown/appkit/react";
-import { Bell, Sparkles, Shield, Zap, Wallet, Globe, Smartphone, ExternalLink, Code } from "lucide-react";
+import { Bell, Sparkles, Shield, Zap, Wallet, Globe, Smartphone, ExternalLink, Code, CheckCircle2, Lock } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -56,13 +57,32 @@ export function LandingPage() {
             Built with React, Next.js, and Solidity for the Web3 ecosystem.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
               <AppKitButton />
             </motion.div>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
+            <Badge variant="secondary" className="bg-green-500/20 text-green-300 border-green-500/50">
+              <CheckCircle2 className="w-3 h-3 mr-1" />
+              Live
+            </Badge>
+            <Badge variant="secondary" className="bg-blue-500/20 text-blue-300 border-blue-500/50">
+              <Code className="w-3 h-3 mr-1" />
+              Solidity 0.8.20
+            </Badge>
+            <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/50">
+              <Zap className="w-3 h-3 mr-1" />
+              Next.js 16
+            </Badge>
+            <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-300 border-yellow-500/50">
+              <Lock className="w-3 h-3 mr-1" />
+              MIT License
+            </Badge>
           </div>
         </motion.div>
 
