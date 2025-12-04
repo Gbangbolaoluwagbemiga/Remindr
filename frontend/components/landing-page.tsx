@@ -2,7 +2,8 @@
 
 import { motion } from "framer-motion";
 import { AppKitButton } from "@reown/appkit/react";
-import { Bell, Sparkles } from "lucide-react";
+import { Bell, Sparkles, Shield, Zap, Wallet, Globe, Smartphone } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function LandingPage() {
   return (
@@ -49,6 +50,114 @@ export function LandingPage() {
             </motion.div>
           </div>
         </motion.div>
+
+        {/* Features Section */}
+        <section className="mb-20">
+          <h2 className="text-4xl font-bold text-center mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            ✨ Features
+          </h2>
+          <p className="text-center text-gray-600 dark:text-white/70 mb-12 text-lg">
+            Everything you need to stay organized on-chain
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20">
+              <CardHeader>
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
+                  <Shield className="w-6 h-6 text-blue-400" />
+                </div>
+                <CardTitle className="text-gray-900 dark:text-white">
+                  On-chain Storage
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-gray-600 dark:text-white/70">
+                  Reminders stored permanently on Base blockchain
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20">
+              <CardHeader>
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
+                  <Zap className="w-6 h-6 text-yellow-400" />
+                </div>
+                <CardTitle className="text-gray-900 dark:text-white">
+                  Gas Optimized
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-gray-600 dark:text-white/70">
+                  Efficient smart contract design
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20">
+              <CardHeader>
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
+                  <Bell className="w-6 h-6 text-purple-400" />
+                </div>
+                <CardTitle className="text-gray-900 dark:text-white">
+                  Smart Notifications
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-gray-600 dark:text-white/70">
+                  Browser notifications + in-app toast alerts
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20">
+              <CardHeader>
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
+                  <Wallet className="w-6 h-6 text-green-400" />
+                </div>
+                <CardTitle className="text-gray-900 dark:text-white">
+                  Wallet Integration
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-gray-600 dark:text-white/70">
+                  Reown (WalletConnect) AppKit for easy connection
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20">
+              <CardHeader>
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
+                  <Globe className="w-6 h-6 text-cyan-400" />
+                </div>
+                <CardTitle className="text-gray-900 dark:text-white">
+                  Multi-chain Support
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-gray-600 dark:text-white/70">
+                  Deployable on Base and Celo networks
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20">
+              <CardHeader>
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4">
+                  <Smartphone className="w-6 h-6 text-pink-400" />
+                </div>
+                <CardTitle className="text-gray-900 dark:text-white">
+                  Responsive Design
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-gray-600 dark:text-white/70">
+                  Works perfectly on desktop and mobile
+                </CardDescription>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
       </div>
     </div>
   );
