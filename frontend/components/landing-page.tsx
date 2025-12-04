@@ -352,6 +352,21 @@ export function LandingPage() {
             </Card>
           </div>
         </section>
+
+        {/* Footer */}
+        <motion.footer
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="mt-20 text-center text-gray-600 dark:text-white/60"
+        >
+          <p className="mb-2">
+            Built with ❤️ for the Web3 ecosystem
+          </p>
+          <p className="text-sm">
+            Never miss an important date again. Stay organized, stay on-chain. 🔔
+          </p>
+        </motion.footer>
       </div>
     </div>
   );
