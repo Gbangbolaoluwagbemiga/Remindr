@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { AppKitButton } from "@reown/appkit/react";
-import { Bell, Sparkles, Shield, Zap, Wallet, Globe, Smartphone, ExternalLink } from "lucide-react";
+import { Bell, Sparkles, Shield, Zap, Wallet, Globe, Smartphone, ExternalLink, Code } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -225,6 +225,48 @@ export function LandingPage() {
                     <ExternalLink className="ml-2 w-4 h-4" />
                   </a>
                 </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
+        {/* Tech Stack Section */}
+        <section className="mb-20">
+          <h2 className="text-4xl font-bold text-center mb-4 bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+            🛠️ Tech Stack
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20">
+              <CardHeader>
+                <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
+                  <Code className="w-5 h-5 text-blue-400" />
+                  Smart Contract
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-gray-700 dark:text-white/80">
+                  <li>• Solidity ^0.8.20</li>
+                  <li>• Hardhat - Development environment</li>
+                  <li>• Ethers.js - Blockchain interactions</li>
+                </ul>
+              </CardContent>
+            </Card>
+            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20">
+              <CardHeader>
+                <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-purple-400" />
+                  Frontend
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-gray-700 dark:text-white/80">
+                  <li>• Next.js 16 - React framework</li>
+                  <li>• TypeScript - Type-safe development</li>
+                  <li>• Wagmi + Viem - Ethereum interactions</li>
+                  <li>• Reown AppKit - Wallet connection</li>
+                  <li>• Tailwind CSS - Styling</li>
+                  <li>• Framer Motion - Animations</li>
+                </ul>
               </CardContent>
             </Card>
           </div>
