@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,13 +13,20 @@ interface SearchBarProps {
 export function SearchBar({ onSearch, placeholder = "Search reminders..." }: SearchBarProps) {
   const [query, setQuery] = useState("");
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onSearch(query);
-    }, 300);
+  const debouncedSearch = useCallback(
+    (value: string) => {
+      const timer = setTimeout(() => {
+        onSearch(value);
+      }, 300);
+      return () => clearTimeout(timer);
+    },
+    [onSearch]
+  );
 
-    return () => clearTimeout(timer);
-  }, [query, onSearch]);
+  useEffect(() => {
+    const cleanup = debouncedSearch(query);
+    return cleanup;
+  }, [query, debouncedSearch]);
 
   const handleClear = () => {
     setQuery("");
