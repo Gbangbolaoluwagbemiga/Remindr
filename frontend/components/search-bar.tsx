@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useKeyboardShortcut } from "@/hooks/useKeyboardShortcut";
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -12,6 +13,11 @@ interface SearchBarProps {
 
 export function SearchBar({ onSearch, placeholder = "Search reminders..." }: SearchBarProps) {
   const [query, setQuery] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useKeyboardShortcut("k", () => {
+    inputRef.current?.focus();
+  }, true);
 
   const debouncedSearch = useCallback(
     (value: string) => {
@@ -37,6 +43,7 @@ export function SearchBar({ onSearch, placeholder = "Search reminders..." }: Sea
     <div className="relative w-full max-w-md">
       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
       <Input
+        ref={inputRef}
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
