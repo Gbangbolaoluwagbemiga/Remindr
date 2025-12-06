@@ -91,9 +91,9 @@ export function FAQSection() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: index * 0.1 }}
+            transition={{ delay: index * 0.05 }}
           >
-            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 overflow-hidden hover:shadow-lg transition-shadow">
+            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 overflow-hidden hover:shadow-lg hover:border-purple-300/50 dark:hover:border-purple-500/50 transition-all">
             <button
               onClick={() => toggleFAQ(index)}
               className="w-full p-6 text-left flex items-center justify-between hover:bg-white/50 dark:hover:bg-white/5 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500/50 rounded-lg"
