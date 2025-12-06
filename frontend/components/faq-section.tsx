@@ -1,0 +1,111 @@
+"use client";
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown, HelpCircle } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+
+interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+const faqData: FAQItem[] = [
+  {
+    question: "What is Remindr?",
+    answer: "Remindr is a decentralized reminder application that stores your reminders on-chain using Base blockchain. Never miss a governance vote, token unlock, or important date again.",
+  },
+  {
+    question: "How does on-chain storage work?",
+    answer: "When you create a reminder, it's stored permanently on the Base blockchain as a smart contract transaction. This ensures your reminders are immutable, transparent, and accessible from any wallet address.",
+  },
+  {
+    question: "Do I need to pay gas fees?",
+    answer: "Yes, creating, updating, or deleting reminders requires gas fees on the Base network. However, Base is an L2 network with significantly lower gas fees compared to Ethereum mainnet.",
+  },
+  {
+    question: "Can I edit or delete my reminders?",
+    answer: "Yes! You can edit or delete any reminder you've created. Only the owner of a reminder can modify or delete it, ensuring your data remains secure.",
+  },
+  {
+    question: "How do notifications work?",
+    answer: "Remindr uses a hybrid notification system. The app checks your reminders every 30 seconds and sends browser notifications when a reminder is due. You'll also see in-app toast notifications.",
+  },
+  {
+    question: "Which wallets are supported?",
+    answer: "Remindr supports all wallets compatible with WalletConnect, including MetaMask, Coinbase Wallet, Trust Wallet, and many others through the Reown AppKit integration.",
+  },
+  {
+    question: "Is my data private?",
+    answer: "Your reminders are stored on-chain, which means they're publicly visible on the blockchain. However, they're associated with your wallet address, not personal information. You can choose to make reminders public or keep them private.",
+  },
+  {
+    question: "What networks are supported?",
+    answer: "Currently, Remindr is deployed on Base Mainnet and Base Sepolia (testnet). The smart contract is also deployable on Celo networks.",
+  },
+];
+
+export function FAQSection() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const toggleFAQ = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
+  return (
+    <section className="mb-20">
+      <div className="text-center mb-12">
+        <div className="flex items-center justify-center gap-2 mb-4">
+          <HelpCircle className="w-8 h-8 text-purple-400" />
+          <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            Frequently Asked Questions
+          </h2>
+        </div>
+        <p className="text-gray-600 dark:text-white/70 text-base sm:text-lg px-4">
+          Everything you need to know about Remindr
+        </p>
+      </div>
+
+      <div className="max-w-3xl mx-auto space-y-4">
+        {faqData.map((faq, index) => (
+          <Card
+            key={index}
+            className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 overflow-hidden"
+          >
+            <button
+              onClick={() => toggleFAQ(index)}
+              className="w-full p-6 text-left flex items-center justify-between hover:bg-white/50 dark:hover:bg-white/5 transition-colors"
+            >
+              <span className="font-semibold text-gray-900 dark:text-white pr-4">
+                {faq.question}
+              </span>
+              <motion.div
+                animate={{ rotate: openIndex === index ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <ChevronDown className="w-5 h-5 text-gray-500 dark:text-white/60 flex-shrink-0" />
+              </motion.div>
+            </button>
+            <AnimatePresence>
+              {openIndex === index && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <CardContent className="pt-0 pb-6 px-6">
+                    <p className="text-gray-600 dark:text-white/70 leading-relaxed">
+                      {faq.answer}
+                    </p>
+                  </CardContent>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </Card>
+        ))}
+      </div>
+    </section>
+  );
+}
+
