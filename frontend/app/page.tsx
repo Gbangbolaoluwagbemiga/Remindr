@@ -723,6 +723,21 @@ export default function Home() {
                   }
                 >
                   <div className="space-y-4">
+                    {(isLoadingReminders || (viewMode === "public" && isLoadingPublic)) && (
+                      <ReminderSkeletonList count={3} />
+                    )}
+                    {((isErrorReminders && viewMode === "my") || (isErrorPublic && viewMode === "public")) && (
+                      <Card className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
+                        <CardContent className="p-6 text-center">
+                          <p className="text-red-800 dark:text-red-200 mb-4">
+                            Failed to load reminders. Please try again.
+                          </p>
+                          <Button onClick={() => viewMode === "my" ? refetch() : refetchPublic()}>
+                            Retry
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    )}
                     {overdueReminders.length > 0 && (
                       <div>
                         <h2 className="text-xl font-semibold text-red-400 mb-3 flex items-center gap-2">
