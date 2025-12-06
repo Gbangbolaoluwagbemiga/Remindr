@@ -61,7 +61,7 @@ export function FAQSection() {
   };
 
   return (
-    <section className="mb-20">
+    <section id="faq" className="mb-20">
       <div className="text-center mb-12">
         <div className="flex items-center justify-center gap-2 mb-4">
           <HelpCircle className="w-8 h-8 text-purple-400" />

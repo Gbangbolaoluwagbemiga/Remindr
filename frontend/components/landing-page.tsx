@@ -143,6 +143,22 @@ export function LandingPage() {
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
             </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button
+                size="lg"
+                variant="outline"
+                className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20"
+                onClick={() => {
+                  document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
+                View FAQ
+                <ArrowRight className="ml-2 w-4 h-4" />
+              </Button>
+            </motion.div>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
