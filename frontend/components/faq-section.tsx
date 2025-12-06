@@ -13,35 +13,43 @@ interface FAQItem {
 const faqData: FAQItem[] = [
   {
     question: "What is Remindr?",
-    answer: "Remindr is a decentralized reminder application that stores your reminders on-chain using Base blockchain. Never miss a governance vote, token unlock, or important date again.",
+    answer: "Remindr is a decentralized reminder application that stores your reminders on-chain using Base blockchain. Never miss a governance vote, token unlock, or important date again. Your reminders are permanently stored on the blockchain, ensuring they're always accessible and immutable.",
   },
   {
     question: "How does on-chain storage work?",
-    answer: "When you create a reminder, it's stored permanently on the Base blockchain as a smart contract transaction. This ensures your reminders are immutable, transparent, and accessible from any wallet address.",
+    answer: "When you create a reminder, it's stored permanently on the Base blockchain as a smart contract transaction. This ensures your reminders are immutable, transparent, and accessible from any wallet address. Each reminder is associated with your wallet address and can be retrieved at any time.",
   },
   {
     question: "Do I need to pay gas fees?",
-    answer: "Yes, creating, updating, or deleting reminders requires gas fees on the Base network. However, Base is an L2 network with significantly lower gas fees compared to Ethereum mainnet.",
+    answer: "Yes, creating, updating, or deleting reminders requires gas fees on the Base network. However, Base is an L2 network with significantly lower gas fees compared to Ethereum mainnet. Reading reminders is free and doesn't require any transactions.",
   },
   {
     question: "Can I edit or delete my reminders?",
-    answer: "Yes! You can edit or delete any reminder you've created. Only the owner of a reminder can modify or delete it, ensuring your data remains secure.",
+    answer: "Yes! You can edit or delete any reminder you've created. Only the owner of a reminder can modify or delete it, ensuring your data remains secure. Updates and deletions are also stored on-chain for full transparency.",
   },
   {
     question: "How do notifications work?",
-    answer: "Remindr uses a hybrid notification system. The app checks your reminders every 30 seconds and sends browser notifications when a reminder is due. You'll also see in-app toast notifications.",
+    answer: "Remindr uses a hybrid notification system. The app checks your reminders every 30 seconds and sends browser notifications when a reminder is due. You'll also see in-app toast notifications. Make sure to enable browser notifications when prompted for the best experience.",
   },
   {
     question: "Which wallets are supported?",
-    answer: "Remindr supports all wallets compatible with WalletConnect, including MetaMask, Coinbase Wallet, Trust Wallet, and many others through the Reown AppKit integration.",
+    answer: "Remindr supports all wallets compatible with WalletConnect, including MetaMask, Coinbase Wallet, Trust Wallet, and many others through the Reown AppKit integration. Simply connect your preferred wallet to get started.",
   },
   {
     question: "Is my data private?",
-    answer: "Your reminders are stored on-chain, which means they're publicly visible on the blockchain. However, they're associated with your wallet address, not personal information. You can choose to make reminders public or keep them private.",
+    answer: "Your reminders are stored on-chain, which means they're publicly visible on the blockchain. However, they're associated with your wallet address, not personal information. You can choose to make reminders public or keep them private to your wallet.",
   },
   {
     question: "What networks are supported?",
-    answer: "Currently, Remindr is deployed on Base Mainnet and Base Sepolia (testnet). The smart contract is also deployable on Celo networks.",
+    answer: "Currently, Remindr is deployed on Base Mainnet and Base Sepolia (testnet). The smart contract is also deployable on Celo networks. We recommend using Base Sepolia for testing and Base Mainnet for production use.",
+  },
+  {
+    question: "Can I use Remindr on mobile?",
+    answer: "Yes! Remindr is fully responsive and works perfectly on mobile devices. You can access it through your mobile browser and connect your mobile wallet (like MetaMask Mobile or Coinbase Wallet) to create and manage reminders on the go.",
+  },
+  {
+    question: "What happens if I lose access to my wallet?",
+    answer: "Since reminders are stored on-chain and associated with your wallet address, you'll need access to your wallet to manage them. Make sure to securely backup your wallet's seed phrase or private key. If you lose access, you won't be able to modify or delete your reminders, but they'll remain on the blockchain.",
   },
 ];
 
