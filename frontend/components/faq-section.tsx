@@ -74,12 +74,16 @@ export function FAQSection() {
         </p>
       </div>
 
-      <div className="max-w-3xl mx-auto space-y-4">
+      <div className="max-w-3xl mx-auto space-y-4 px-4">
         {faqData.map((faq, index) => (
-          <Card
+          <motion.div
             key={index}
-            className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 overflow-hidden"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.1 }}
           >
+            <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 overflow-hidden hover:shadow-lg transition-shadow">
             <button
               onClick={() => toggleFAQ(index)}
               className="w-full p-6 text-left flex items-center justify-between hover:bg-white/50 dark:hover:bg-white/5 transition-colors"
@@ -110,7 +114,8 @@ export function FAQSection() {
                 </motion.div>
               )}
             </AnimatePresence>
-          </Card>
+            </Card>
+          </motion.div>
         ))}
       </div>
     </section>
