@@ -856,7 +856,20 @@ export default function Home() {
                       </div>
                     )}
 
-                    {(!displayReminders ||
+                    {searchQuery && filteredReminders.length === 0 && (
+                      <Card className="bg-white/90 dark:bg-white/10 backdrop-blur-lg">
+                        <CardContent className="p-12 text-center">
+                          <Search className="w-16 h-16 text-gray-400 dark:text-white/40 mx-auto mb-4" />
+                          <p className="text-gray-700 dark:text-white/60 text-lg">
+                            No reminders found
+                          </p>
+                          <p className="text-gray-500 dark:text-white/40 text-sm mt-2">
+                            Try adjusting your search query
+                          </p>
+                        </CardContent>
+                      </Card>
+                    )}
+                    {!searchQuery && (!displayReminders ||
                       displayReminders.filter((r) => r.exists).length ===
                         0) && (
                       <Card className="bg-white/90 dark:bg-white/10 backdrop-blur-lg">
