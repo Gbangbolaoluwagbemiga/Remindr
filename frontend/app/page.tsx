@@ -506,6 +506,21 @@ export default function Home() {
             </motion.div>
 
             {/* User Stats Dashboard */}
+            {viewMode === "stats" && isLoadingStats && (
+              <StatsSkeleton />
+            )}
+            {viewMode === "stats" && isErrorStats && (
+              <Card className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
+                <CardContent className="p-6 text-center">
+                  <p className="text-red-800 dark:text-red-200 mb-4">
+                    Failed to load stats. Please try again.
+                  </p>
+                  <Button onClick={() => window.location.reload()}>
+                    Reload
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
             {viewMode === "stats" && userStats && (
               <motion.div
                 initial={{ opacity: 0 }}
