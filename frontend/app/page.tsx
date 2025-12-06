@@ -59,6 +59,9 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { useReminderNotifications } from "@/hooks/useReminderNotifications";
 import { ReminderForm } from "@/components/reminder-form";
 import { LandingPage } from "@/components/landing-page";
+import { ReminderSkeletonList } from "@/components/reminder-skeleton";
+import { StatsSkeleton } from "@/components/stats-skeleton";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 type ViewMode = "my" | "public" | "templates" | "stats";
 
@@ -86,7 +89,12 @@ export default function Home() {
   const [isCreating, setIsCreating] = useState(false);
 
   // Read user reminders
-  const { data: reminders, refetch } = useReadContract({
+  const { 
+    data: reminders, 
+    refetch,
+    isLoading: isLoadingReminders,
+    isError: isErrorReminders,
+  } = useReadContract({
     address: REMINDR_ADDRESS,
     abi: REMINDR_ABI,
     functionName: "getUserReminders",
@@ -94,10 +102,20 @@ export default function Home() {
     query: {
       enabled: !!address && viewMode === "my",
     },
-  }) as { data: Reminder[] | undefined; refetch: () => void };
+  }) as { 
+    data: Reminder[] | undefined; 
+    refetch: () => void;
+    isLoading: boolean;
+    isError: boolean;
+  };
 
   // Read public reminders
-  const { data: publicReminders, refetch: refetchPublic } = useReadContract({
+  const { 
+    data: publicReminders, 
+    refetch: refetchPublic,
+    isLoading: isLoadingPublic,
+    isError: isErrorPublic,
+  } = useReadContract({
     address: REMINDR_ADDRESS,
     abi: REMINDR_ABI,
     functionName: "getPublicReminders",
@@ -105,7 +123,12 @@ export default function Home() {
     query: {
       enabled: viewMode === "public",
     },
-  }) as { data: Reminder[] | undefined; refetch: () => void };
+  }) as { 
+    data: Reminder[] | undefined; 
+    refetch: () => void;
+    isLoading: boolean;
+    isError: boolean;
+  };
 
   // Read templates
   const { data: templates } = useReadContract({
@@ -118,7 +141,11 @@ export default function Home() {
   }) as { data: Template[] | undefined };
 
   // Read user stats
-  const { data: userStats } = useReadContract({
+  const { 
+    data: userStats,
+    isLoading: isLoadingStats,
+    isError: isErrorStats,
+  } = useReadContract({
     address: REMINDR_ADDRESS,
     abi: REMINDR_ABI,
     functionName: "getUserStats",
@@ -126,7 +153,11 @@ export default function Home() {
     query: {
       enabled: !!address,
     },
-  }) as { data: UserStats | undefined };
+  }) as { 
+    data: UserStats | undefined;
+    isLoading: boolean;
+    isError: boolean;
+  };
 
   // Write contract hooks
   const { writeContract, data: hash, isPending } = useWriteContract();
