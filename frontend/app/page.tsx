@@ -462,12 +462,17 @@ export default function Home() {
           </motion.div>
         </motion.div>
 
-        {/* View Mode Tabs */}
+            {/* View Mode Tabs */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="flex gap-2 mb-6 justify-center flex-wrap"
             >
+              {viewMode !== "stats" && viewMode !== "templates" && (
+                <div className="w-full flex justify-center mb-4">
+                  <SearchBar onSearch={setSearchQuery} />
+                </div>
+              )}
               <Button
                 variant={viewMode === "my" ? "default" : "outline"}
                 onClick={() => setViewMode("my")}
