@@ -633,8 +633,9 @@ export default function Home() {
                           Total
                         </p>
                         <p className="text-2xl font-bold">
-                          {displayReminders?.filter((r) => r.exists).length ||
-                            0}
+                          {searchQuery 
+                            ? filteredReminders.length 
+                            : displayReminders?.filter((r) => r.exists).length || 0}
                         </p>
                       </div>
                       <Bell className="w-8 h-8 text-yellow-400" />
