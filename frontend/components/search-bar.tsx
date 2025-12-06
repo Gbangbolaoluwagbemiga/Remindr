@@ -47,7 +47,7 @@ export function SearchBar({ onSearch, placeholder = "Search reminders..." }: Sea
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder={placeholder}
+        placeholder={`${placeholder} (Ctrl+K)`}
         className="pl-10 pr-10 bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20"
       />
       {query && (
