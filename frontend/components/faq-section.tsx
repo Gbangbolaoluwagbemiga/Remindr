@@ -62,9 +62,19 @@ export function FAQSection() {
 
   return (
     <section id="faq" className="mb-20">
-      <div className="text-center mb-12">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="text-center mb-12"
+      >
         <div className="flex items-center justify-center gap-2 mb-4">
-          <HelpCircle className="w-8 h-8 text-purple-400" />
+          <motion.div
+            animate={{ rotate: [0, 10, -10, 0] }}
+            transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+          >
+            <HelpCircle className="w-8 h-8 text-purple-400" />
+          </motion.div>
           <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
             Frequently Asked Questions
           </h2>
@@ -72,7 +82,7 @@ export function FAQSection() {
         <p className="text-gray-600 dark:text-white/70 text-base sm:text-lg px-4">
           Everything you need to know about Remindr
         </p>
-      </div>
+      </motion.div>
 
       <div className="max-w-3xl mx-auto space-y-4 px-4">
         {faqData.map((faq, index) => (
