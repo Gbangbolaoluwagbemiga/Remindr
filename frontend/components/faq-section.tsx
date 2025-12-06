@@ -86,7 +86,9 @@ export function FAQSection() {
             <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20 overflow-hidden hover:shadow-lg transition-shadow">
             <button
               onClick={() => toggleFAQ(index)}
-              className="w-full p-6 text-left flex items-center justify-between hover:bg-white/50 dark:hover:bg-white/5 transition-colors"
+              className="w-full p-6 text-left flex items-center justify-between hover:bg-white/50 dark:hover:bg-white/5 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500/50 rounded-lg"
+              aria-expanded={openIndex === index}
+              aria-controls={`faq-answer-${index}`}
             >
               <span className="font-semibold text-gray-900 dark:text-white pr-4">
                 {faq.question}
@@ -106,7 +108,7 @@ export function FAQSection() {
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <CardContent className="pt-0 pb-6 px-6">
+                  <CardContent id={`faq-answer-${index}`} className="pt-0 pb-6 px-6">
                     <p className="text-gray-600 dark:text-white/70 leading-relaxed">
                       {faq.answer}
                     </p>
