@@ -63,13 +63,14 @@ const features = [
  * @example
  * ```tsx
  * import { LandingPage } from "@/components/landing-page";
-import { FAQSection } from "@/components/faq-section";
  * 
  * function App() {
  *   return <LandingPage />;
  * }
  * ```
  */
+import { FAQSection } from "@/components/faq-section";
+
 export function LandingPage() {
   return (
     <div className="min-h-screen bg-smooth-gradient relative overflow-hidden">
