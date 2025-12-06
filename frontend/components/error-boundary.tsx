@@ -52,11 +52,21 @@ export class ErrorBoundary extends Component<Props, State> {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {this.state.error && (
+              {this.state.error && process.env.NODE_ENV === "development" && (
                 <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 rounded-md">
                   <p className="text-sm text-red-800 dark:text-red-200 font-mono">
                     {this.state.error.message}
                   </p>
+                  {this.state.error.stack && (
+                    <details className="mt-2">
+                      <summary className="text-xs text-red-600 dark:text-red-400 cursor-pointer">
+                        Stack trace
+                      </summary>
+                      <pre className="text-xs mt-2 overflow-auto max-h-40">
+                        {this.state.error.stack}
+                      </pre>
+                    </details>
+                  )}
                 </div>
               )}
               <div className="flex gap-2">
