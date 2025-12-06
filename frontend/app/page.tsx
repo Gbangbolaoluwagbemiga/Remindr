@@ -62,6 +62,7 @@ import { LandingPage } from "@/components/landing-page";
 import { ReminderSkeletonList } from "@/components/reminder-skeleton";
 import { StatsSkeleton } from "@/components/stats-skeleton";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { SearchBar } from "@/components/search-bar";
 
 type ViewMode = "my" | "public" | "templates" | "stats";
 
@@ -87,6 +88,7 @@ export default function Home() {
   const [isPublic, setIsPublic] = useState(false);
   const [editingId, setEditingId] = useState<bigint | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Read user reminders
   const { 
@@ -348,10 +350,21 @@ export default function Home() {
     useReminderNotifications(reminders, isConnected);
 
   const displayReminders = viewMode === "public" ? publicReminders : reminders;
-  const activeReminders =
-    displayReminders?.filter((r) => r.exists && !r.isCompleted) || [];
-  const completedReminders =
-    displayReminders?.filter((r) => r.exists && r.isCompleted) || [];
+  
+  // Filter reminders by search query
+  const filteredReminders = displayReminders?.filter((r) => {
+    if (!r.exists) return false;
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      r.title.toLowerCase().includes(query) ||
+      r.description.toLowerCase().includes(query) ||
+      r.tags.some((tag) => tag.toLowerCase().includes(query))
+    );
+  }) || [];
+  
+  const activeReminders = filteredReminders.filter((r) => !r.isCompleted);
+  const completedReminders = filteredReminders.filter((r) => r.isCompleted);
   const pendingReminders = activeReminders.filter((r) => !isPast(r.timestamp));
   const overdueReminders = activeReminders.filter((r) => isPast(r.timestamp));
 
