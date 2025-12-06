@@ -69,6 +69,8 @@ const features = [
  * }
  * ```
  */
+import { FAQSection } from "@/components/faq-section";
+
 export function LandingPage() {
   return (
     <div className="min-h-screen bg-smooth-gradient relative overflow-hidden">
@@ -116,7 +118,7 @@ export function LandingPage() {
           </p>
           <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-white/70 mb-8 max-w-2xl mx-auto px-4">
             Never miss a governance vote, token unlock, or important date again. 
-            Built with React, Next.js, and Solidity for the Web3 ecosystem.
+            Built on Base L2 blockchain.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
@@ -142,6 +144,22 @@ export function LandingPage() {
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
             </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button
+                size="lg"
+                variant="outline"
+                className="bg-white/80 dark:bg-white/10 backdrop-blur-lg border-gray-200/50 dark:border-white/20"
+                onClick={() => {
+                  document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
+                View FAQ
+                <ArrowRight className="ml-2 w-4 h-4" />
+              </Button>
+            </motion.div>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
@@ -151,16 +169,10 @@ export function LandingPage() {
             </Badge>
             <Badge variant="secondary" className="bg-blue-500/20 text-blue-300 border-blue-500/50">
               <Code className="w-3 h-3 mr-1" />
-              Solidity 0.8.20
+              Base
             </Badge>
-            <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/50">
-              <Zap className="w-3 h-3 mr-1" />
-              Next.js 16
-            </Badge>
-            <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-300 border-yellow-500/50">
-              <Lock className="w-3 h-3 mr-1" />
-              MIT License
-            </Badge>
+           
+           
           </div>
         </motion.div>
 
@@ -347,6 +359,9 @@ export function LandingPage() {
             </Card>
           </div>
         </section>
+
+        {/* FAQ Section */}
+        <FAQSection />
 
         {/* Footer */}
         <motion.footer
