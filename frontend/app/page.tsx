@@ -58,6 +58,11 @@ import {
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useReminderNotifications } from "@/hooks/useReminderNotifications";
 import { ReminderForm } from "@/components/reminder-form";
+import { LandingPage } from "@/components/landing-page";
+import { ReminderSkeletonList } from "@/components/reminder-skeleton";
+import { StatsSkeleton } from "@/components/stats-skeleton";
+import { ErrorBoundary } from "@/components/error-boundary";
+import { SearchBar } from "@/components/search-bar";
 
 type ViewMode = "my" | "public" | "templates" | "stats";
 
@@ -83,9 +88,15 @@ export default function Home() {
   const [isPublic, setIsPublic] = useState(false);
   const [editingId, setEditingId] = useState<bigint | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Read user reminders
-  const { data: reminders, refetch } = useReadContract({
+  const { 
+    data: reminders, 
+    refetch,
+    isLoading: isLoadingReminders,
+    isError: isErrorReminders,
+  } = useReadContract({
     address: REMINDR_ADDRESS,
     abi: REMINDR_ABI,
     functionName: "getUserReminders",
@@ -93,10 +104,20 @@ export default function Home() {
     query: {
       enabled: !!address && viewMode === "my",
     },
-  }) as { data: Reminder[] | undefined; refetch: () => void };
+  }) as { 
+    data: Reminder[] | undefined; 
+    refetch: () => void;
+    isLoading: boolean;
+    isError: boolean;
+  };
 
   // Read public reminders
-  const { data: publicReminders, refetch: refetchPublic } = useReadContract({
+  const { 
+    data: publicReminders, 
+    refetch: refetchPublic,
+    isLoading: isLoadingPublic,
+    isError: isErrorPublic,
+  } = useReadContract({
     address: REMINDR_ADDRESS,
     abi: REMINDR_ABI,
     functionName: "getPublicReminders",
@@ -104,7 +125,12 @@ export default function Home() {
     query: {
       enabled: viewMode === "public",
     },
-  }) as { data: Reminder[] | undefined; refetch: () => void };
+  }) as { 
+    data: Reminder[] | undefined; 
+    refetch: () => void;
+    isLoading: boolean;
+    isError: boolean;
+  };
 
   // Read templates
   const { data: templates } = useReadContract({
@@ -117,7 +143,11 @@ export default function Home() {
   }) as { data: Template[] | undefined };
 
   // Read user stats
-  const { data: userStats } = useReadContract({
+  const { 
+    data: userStats,
+    isLoading: isLoadingStats,
+    isError: isErrorStats,
+  } = useReadContract({
     address: REMINDR_ADDRESS,
     abi: REMINDR_ABI,
     functionName: "getUserStats",
@@ -125,7 +155,11 @@ export default function Home() {
     query: {
       enabled: !!address,
     },
-  }) as { data: UserStats | undefined };
+  }) as { 
+    data: UserStats | undefined;
+    isLoading: boolean;
+    isError: boolean;
+  };
 
   // Write contract hooks
   const { writeContract, data: hash, isPending } = useWriteContract();
@@ -316,12 +350,39 @@ export default function Home() {
     useReminderNotifications(reminders, isConnected);
 
   const displayReminders = viewMode === "public" ? publicReminders : reminders;
-  const activeReminders =
-    displayReminders?.filter((r) => r.exists && !r.isCompleted) || [];
-  const completedReminders =
-    displayReminders?.filter((r) => r.exists && r.isCompleted) || [];
+  
+  // Filter reminders by search query
+  const filteredReminders = displayReminders?.filter((r) => {
+    if (!r.exists) return false;
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      r.title.toLowerCase().includes(query) ||
+      r.description.toLowerCase().includes(query) ||
+      r.tags.some((tag) => tag.toLowerCase().includes(query))
+    );
+  }) || [];
+  
+  const activeReminders = filteredReminders.filter((r) => !r.isCompleted);
+  const completedReminders = filteredReminders.filter((r) => r.isCompleted);
   const pendingReminders = activeReminders.filter((r) => !isPast(r.timestamp));
   const overdueReminders = activeReminders.filter((r) => isPast(r.timestamp));
+
+  // Show landing page when not connected
+  if (!isConnected) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="absolute top-4 right-4 z-20">
+          <ThemeToggle />
+        </div>
+        <LandingPage />
+      </motion.div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-smooth-gradient relative overflow-hidden transition-colors duration-500">
@@ -376,55 +437,42 @@ export default function Home() {
             features
           </p>
 
-          {!isConnected ? (
-            <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              className="flex flex-col items-center gap-4"
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex items-center justify-center gap-4"
+          >
+            <Badge
+              variant="secondary"
+              className="bg-green-500 dark:bg-green-500/20 text-white dark:text-green-300 border-green-600 dark:border-green-500/50 shadow-md px-3 py-1.5"
             >
-              <div className="flex items-center gap-2 dark:text-white/60 text-gray-600 mb-2">
-                <Wallet className="w-5 h-5" />
-                <span>Connect your wallet to get started</span>
-              </div>
-              <div className="scale-125">
-                <AppKitButton />
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex items-center justify-center gap-4"
+              <div className="w-2 h-2 bg-white dark:bg-green-400 rounded-full mr-2 animate-pulse" />
+              Connected
+            </Badge>
+            <span className="dark:text-white/60 text-gray-700 font-mono text-sm font-medium bg-white/60 dark:bg-white/10 px-3 py-1.5 rounded-md backdrop-blur-sm border border-gray-200 dark:border-white/20">
+              {address?.slice(0, 6)}...{address?.slice(-4)}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => open({ view: "Account" })}
             >
-              <Badge
-                variant="secondary"
-                className="bg-green-500 dark:bg-green-500/20 text-white dark:text-green-300 border-green-600 dark:border-green-500/50 shadow-md px-3 py-1.5"
-              >
-                <div className="w-2 h-2 bg-white dark:bg-green-400 rounded-full mr-2 animate-pulse" />
-                Connected
-              </Badge>
-              <span className="dark:text-white/60 text-gray-700 font-mono text-sm font-medium bg-white/60 dark:bg-white/10 px-3 py-1.5 rounded-md backdrop-blur-sm border border-gray-200 dark:border-white/20">
-                {address?.slice(0, 6)}...{address?.slice(-4)}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => open({ view: "Account" })}
-              >
-                Manage
-              </Button>
-            </motion.div>
-          )}
+              Manage
+            </Button>
+          </motion.div>
         </motion.div>
 
-        {isConnected && (
-          <>
             {/* View Mode Tabs */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="flex gap-2 mb-6 justify-center flex-wrap"
             >
+              {viewMode !== "stats" && viewMode !== "templates" && (
+                <div className="w-full flex justify-center mb-4">
+                  <SearchBar onSearch={setSearchQuery} />
+                </div>
+              )}
               <Button
                 variant={viewMode === "my" ? "default" : "outline"}
                 onClick={() => setViewMode("my")}
@@ -476,6 +524,21 @@ export default function Home() {
             </motion.div>
 
             {/* User Stats Dashboard */}
+            {viewMode === "stats" && isLoadingStats && (
+              <StatsSkeleton />
+            )}
+            {viewMode === "stats" && isErrorStats && (
+              <Card className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
+                <CardContent className="p-6 text-center">
+                  <p className="text-red-800 dark:text-red-200 mb-4">
+                    Failed to load stats. Please try again.
+                  </p>
+                  <Button onClick={() => window.location.reload()}>
+                    Reload
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
             {viewMode === "stats" && userStats && (
               <motion.div
                 initial={{ opacity: 0 }}
@@ -570,8 +633,9 @@ export default function Home() {
                           Total
                         </p>
                         <p className="text-2xl font-bold">
-                          {displayReminders?.filter((r) => r.exists).length ||
-                            0}
+                          {searchQuery 
+                            ? filteredReminders.length 
+                            : displayReminders?.filter((r) => r.exists).length || 0}
                         </p>
                       </div>
                       <Bell className="w-8 h-8 text-yellow-400" />
@@ -693,6 +757,21 @@ export default function Home() {
                   }
                 >
                   <div className="space-y-4">
+                    {(isLoadingReminders || (viewMode === "public" && isLoadingPublic)) && (
+                      <ReminderSkeletonList count={3} />
+                    )}
+                    {((isErrorReminders && viewMode === "my") || (isErrorPublic && viewMode === "public")) && (
+                      <Card className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
+                        <CardContent className="p-6 text-center">
+                          <p className="text-red-800 dark:text-red-200 mb-4">
+                            Failed to load reminders. Please try again.
+                          </p>
+                          <Button onClick={() => viewMode === "my" ? refetch() : refetchPublic()}>
+                            Retry
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    )}
                     {overdueReminders.length > 0 && (
                       <div>
                         <h2 className="text-xl font-semibold text-red-400 mb-3 flex items-center gap-2">
@@ -777,7 +856,20 @@ export default function Home() {
                       </div>
                     )}
 
-                    {(!displayReminders ||
+                    {searchQuery && filteredReminders.length === 0 && (
+                      <Card className="bg-white/90 dark:bg-white/10 backdrop-blur-lg">
+                        <CardContent className="p-12 text-center">
+                          <Search className="w-16 h-16 text-gray-400 dark:text-white/40 mx-auto mb-4" />
+                          <p className="text-gray-700 dark:text-white/60 text-lg">
+                            No reminders found
+                          </p>
+                          <p className="text-gray-500 dark:text-white/40 text-sm mt-2">
+                            Try adjusting your search query
+                          </p>
+                        </CardContent>
+                      </Card>
+                    )}
+                    {!searchQuery && (!displayReminders ||
                       displayReminders.filter((r) => r.exists).length ===
                         0) && (
                       <Card className="bg-white/90 dark:bg-white/10 backdrop-blur-lg">
@@ -798,8 +890,6 @@ export default function Home() {
                 </motion.div>
               )}
             </div>
-          </>
-        )}
       </div>
     </div>
   );
