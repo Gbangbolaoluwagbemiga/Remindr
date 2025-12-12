@@ -8,9 +8,9 @@ module.exports = {
     settings: {
       optimizer: {
         enabled: true,
-        runs: 50, // Very low runs for minimal contract size
+        runs: 1,
       },
-      viaIR: true, // Enable IR-based compilation to handle stack too deep
+      viaIR: true,
     },
   },
   networks: {

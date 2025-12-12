@@ -104,7 +104,6 @@ contract Remindr {
     // Constants
     uint256 public constant MAX_PARTICIPANTS = 50;
     uint256 public constant MAX_TAGS = 10;
-    uint256 public constant REPUTATION_BASE = 10;
     uint256 public constant SNOOZE_LIMIT = 5;
     uint256 public constant SNOOZE_MAX_SECONDS = 30 days;
 
