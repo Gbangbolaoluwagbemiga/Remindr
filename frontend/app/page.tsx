@@ -136,7 +136,7 @@ export default function Home() {
 
   // Read templates
   const { data: templates } = useReadContract({
-    address: REMINDR_ADDRESS,
+    address: contractAddress,
     abi: REMINDR_ABI,
     functionName: "getTemplates",
     query: {
@@ -306,7 +306,7 @@ export default function Home() {
       return;
     }
     writeContract({
-      address: REMINDR_ADDRESS,
+      address: contractAddress,
       abi: REMINDR_ABI,
       functionName: "addParticipant",
       args: [id, participantAddress as `0x${string}`],
