@@ -53,6 +53,7 @@ contract Remindr {
         ReminderPriority priority;
         string[] tags;
         uint256 templateId; // 0 if not from template
+        uint256 snoozeCount;
     }
 
     struct UserStats {
@@ -104,6 +105,8 @@ contract Remindr {
     uint256 public constant MAX_PARTICIPANTS = 50;
     uint256 public constant MAX_TAGS = 10;
     uint256 public constant REPUTATION_BASE = 10;
+    uint256 public constant SNOOZE_LIMIT = 5;
+    uint256 public constant SNOOZE_MAX_SECONDS = 30 days;
     
     // Events
     event ReminderCreated(
@@ -146,6 +149,7 @@ contract Remindr {
     event TemplateCreated(uint256 indexed templateId, string title, Category category);
     
     event ReputationUpdated(address indexed user, uint256 newReputation);
+    event ReminderSnoozed(uint256 indexed id, address indexed user, uint256 newTimestamp, uint256 snoozeBy);
 
     // Modifiers
     modifier onlyReminderOwner(uint256 _id) {
@@ -354,6 +358,20 @@ contract Remindr {
         
         emit ReminderCompleted(_id, msg.sender);
     }
+    function snoozeReminder(uint256 _id, uint256 _snoozeBy) external onlyParticipant(_id) {
+        require(!reminders[_id].isCompleted);
+        require(_snoozeBy > 0 && _snoozeBy <= SNOOZE_MAX_SECONDS);
+        Reminder storage r = reminders[_id];
+        require(r.snoozeCount < SNOOZE_LIMIT);
+        r.timestamp = r.timestamp + _snoozeBy;
+        r.nextOccurrence = _calculateNextOccurrence(
+            r.timestamp,
+            r.recurrenceType,
+            r.recurrenceInterval
+        );
+        r.snoozeCount++;
+        emit ReminderSnoozed(_id, msg.sender, r.timestamp, _snoozeBy);
+    }
 
     /**
      * @notice Update an existing reminder
@@ -418,6 +436,11 @@ contract Remindr {
                 reminder.timestamp <= block.timestamp) {
                 _createRecurringInstance(id);
             }
+        }
+    }
+    function batchCompleteReminders(uint256[] memory _ids) external {
+        for (uint256 i = 0; i < _ids.length; i++) {
+            completeReminder(_ids[i]);
         }
     }
 
@@ -718,4 +741,3 @@ contract Remindr {
         emit AchievementUnlocked(_user, _achievementId, _name);
     }
 }
-
