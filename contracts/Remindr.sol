@@ -166,7 +166,7 @@ contract Remindr {
     }
 
     modifier onlyParticipant(uint256 _id) {
-        require(reminders[_id].exists, "Reminder does not exist");
+        require(reminders[_id].exists);
         require(
             reminders[_id].owner == msg.sender || 
             isParticipant(_id, msg.sender)
@@ -368,7 +368,7 @@ contract Remindr {
      */
     function completeReminder(uint256 _id) external onlyParticipant(_id) {
         require(!paused);
-        require(!reminders[_id].isCompleted, "Already completed");
+        require(!reminders[_id].isCompleted);
         
         reminders[_id].isCompleted = true;
         
@@ -415,7 +415,7 @@ contract Remindr {
         string[] memory _tags
     ) external onlyReminderOwner(_id) {
         require(!paused);
-        require(!reminders[_id].isCompleted, "Cannot update completed reminder");
+        require(!reminders[_id].isCompleted);
         require(_tags.length <= MAX_TAGS);
         
         if (bytes(_title).length > 0) {
