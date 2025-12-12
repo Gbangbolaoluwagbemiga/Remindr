@@ -107,6 +107,9 @@ contract Remindr {
     uint256 public constant REPUTATION_BASE = 10;
     uint256 public constant SNOOZE_LIMIT = 5;
     uint256 public constant SNOOZE_MAX_SECONDS = 30 days;
+
+    address public admin;
+    bool public paused;
     
     // Events
     event ReminderCreated(
@@ -152,6 +155,10 @@ contract Remindr {
     event ReminderSnoozed(uint256 indexed id, address indexed user, uint256 newTimestamp, uint256 snoozeBy);
 
     // Modifiers
+    modifier onlyAdmin() {
+        require(msg.sender == admin);
+        _;
+    }
     modifier onlyReminderOwner(uint256 _id) {
         require(reminders[_id].exists);
         require(reminders[_id].owner == msg.sender);
@@ -171,11 +178,26 @@ contract Remindr {
      * @notice Initialize default templates
      */
     constructor() {
+        admin = msg.sender;
+        paused = false;
         _createTemplate("Governance Vote", "Reminder for DAO governance vote", Category.Governance, 7 days);
         _createTemplate("Token Unlock", "Reminder for token unlock event", Category.TokenUnlock, 30 days);
         _createTemplate("Airdrop Claim", "Reminder to claim airdrop", Category.Airdrop, 14 days);
         _createTemplate("NFT Drop", "Reminder for NFT mint/drop", Category.NFT, 3 days);
         _createTemplate("DeFi Strategy", "Reminder for DeFi action", Category.DeFi, 1 days);
+    }
+
+    function pause() external onlyAdmin {
+        paused = true;
+    }
+
+    function unpause() external onlyAdmin {
+        paused = false;
+    }
+
+    function transferAdmin(address _newAdmin) external onlyAdmin {
+        require(_newAdmin != address(0));
+        admin = _newAdmin;
     }
 
     /**
@@ -193,6 +215,7 @@ contract Remindr {
         string[] memory _tags,
         uint256 _templateId
     ) external {
+        require(!paused);
         _createReminderInternal(
             _title,
             _description,
@@ -281,6 +304,7 @@ contract Remindr {
         RecurrenceType _recurrenceType,
         bool _isPublic
     ) external {
+        require(!paused);
         require(templates[_templateId].exists);
         Template memory template = templates[_templateId];
         
@@ -302,6 +326,7 @@ contract Remindr {
      * @notice Add participants to a reminder (make it shared)
      */
     function addParticipant(uint256 _id, address _participant) external onlyReminderOwner(_id) {
+        require(!paused);
         require(!isParticipant(_id, _participant));
         require(_participant != reminders[_id].owner);
         require(reminders[_id].participants.length < MAX_PARTICIPANTS);
@@ -319,6 +344,7 @@ contract Remindr {
      * @notice Remove a participant from a reminder
      */
     function removeParticipant(uint256 _id, address _participant) external onlyReminderOwner(_id) {
+        require(!paused);
         require(isParticipant(_id, _participant));
         
         address[] storage participants = reminders[_id].participants;
@@ -341,6 +367,7 @@ contract Remindr {
      * @notice Complete a reminder (can be called by owner or participant)
      */
     function completeReminder(uint256 _id) external onlyParticipant(_id) {
+        require(!paused);
         require(!reminders[_id].isCompleted, "Already completed");
         
         reminders[_id].isCompleted = true;
@@ -360,6 +387,7 @@ contract Remindr {
         emit ReminderCompleted(_id, msg.sender);
     }
     function snoozeReminder(uint256 _id, uint256 _snoozeBy) external onlyParticipant(_id) {
+        require(!paused);
         require(!reminders[_id].isCompleted);
         require(_snoozeBy > 0 && _snoozeBy <= SNOOZE_MAX_SECONDS);
         Reminder storage r = reminders[_id];
@@ -386,6 +414,7 @@ contract Remindr {
         ReminderPriority _priority,
         string[] memory _tags
     ) external onlyReminderOwner(_id) {
+        require(!paused);
         require(!reminders[_id].isCompleted, "Cannot update completed reminder");
         require(_tags.length <= MAX_TAGS);
         
@@ -418,6 +447,7 @@ contract Remindr {
      * @notice Delete a reminder
      */
     function deleteReminder(uint256 _id) external onlyReminderOwner(_id) {
+        require(!paused);
         reminders[_id].exists = false;
         emit ReminderDeleted(_id, msg.sender);
     }
@@ -426,6 +456,7 @@ contract Remindr {
      * @notice Process recurring reminders (can be called by anyone)
      */
     function processRecurringReminders(uint256[] memory _reminderIds) external {
+        require(!paused);
         for (uint256 i = 0; i < _reminderIds.length; i++) {
             uint256 id = _reminderIds[i];
             Reminder memory reminder = reminders[id];
@@ -440,6 +471,7 @@ contract Remindr {
         }
     }
     function batchCompleteReminders(uint256[] memory _ids) external {
+        require(!paused);
         for (uint256 i = 0; i < _ids.length; i++) {
             this.completeReminder(_ids[i]);
         }
@@ -453,7 +485,7 @@ contract Remindr {
         string memory _description,
         Category _category,
         uint256 _defaultDuration
-    ) external {
+    ) external onlyAdmin {
         templateCounter++;
         uint256 newId = templateCounter;
         
