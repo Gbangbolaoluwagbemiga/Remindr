@@ -71,6 +71,7 @@ export default function Home() {
   const { address, isConnected } = useAccount();
   const { open } = useAppKit();
   const chainId = useChainId();
+  const contractAddress = getContractAddress(chainId);
   const [viewMode, setViewMode] = useState<ViewMode>("my");
   const [selectedTemplate, setSelectedTemplate] = useState<bigint | null>(null);
 
@@ -1113,4 +1114,3 @@ function EnhancedReminderCard({
     </motion.div>
   );
 }
-  const contractAddress = getContractAddress(chainId);
