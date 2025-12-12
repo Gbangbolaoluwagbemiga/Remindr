@@ -5,10 +5,10 @@ import {
   useReadContract,
   useWriteContract,
   useWaitForTransactionReceipt,
+  useChainId,
 } from "wagmi";
 import {
   REMINDR_ABI,
-  REMINDR_ADDRESS,
   Reminder,
   RecurrenceType,
   Category,
@@ -20,6 +20,7 @@ import {
   getPriorityLabel,
   getCategoryColor,
   getPriorityColor,
+  getContractAddress,
 } from "@/lib/contract";
 import { useState, useEffect } from "react";
 import { useAppKit, AppKitButton } from "@reown/appkit/react";
@@ -69,6 +70,7 @@ type ViewMode = "my" | "public" | "templates" | "stats";
 export default function Home() {
   const { address, isConnected } = useAccount();
   const { open } = useAppKit();
+  const chainId = useChainId();
   const [viewMode, setViewMode] = useState<ViewMode>("my");
   const [selectedTemplate, setSelectedTemplate] = useState<bigint | null>(null);
 
@@ -97,7 +99,7 @@ export default function Home() {
     isLoading: isLoadingReminders,
     isError: isErrorReminders,
   } = useReadContract({
-    address: REMINDR_ADDRESS,
+    address: contractAddress,
     abi: REMINDR_ABI,
     functionName: "getUserReminders",
     args: address ? [address] : undefined,
@@ -118,7 +120,7 @@ export default function Home() {
     isLoading: isLoadingPublic,
     isError: isErrorPublic,
   } = useReadContract({
-    address: REMINDR_ADDRESS,
+    address: contractAddress,
     abi: REMINDR_ABI,
     functionName: "getPublicReminders",
     args: [BigInt(20), BigInt(0)],
@@ -148,7 +150,7 @@ export default function Home() {
     isLoading: isLoadingStats,
     isError: isErrorStats,
   } = useReadContract({
-    address: REMINDR_ADDRESS,
+    address: contractAddress,
     abi: REMINDR_ABI,
     functionName: "getUserStats",
     args: address ? [address] : undefined,
@@ -209,7 +211,7 @@ export default function Home() {
 
     setIsCreating(true);
     writeContract({
-      address: REMINDR_ADDRESS,
+      address: contractAddress,
       abi: REMINDR_ABI,
       functionName: "createReminder",
       args: [
@@ -260,7 +262,7 @@ export default function Home() {
     }
 
     writeContract({
-      address: REMINDR_ADDRESS,
+      address: contractAddress,
       abi: REMINDR_ABI,
       functionName: "updateReminder",
       args: [
@@ -277,7 +279,7 @@ export default function Home() {
 
   const handleCompleteReminder = (id: bigint) => {
     writeContract({
-      address: REMINDR_ADDRESS,
+      address: contractAddress,
       abi: REMINDR_ABI,
       functionName: "completeReminder",
       args: [id],
@@ -287,7 +289,7 @@ export default function Home() {
 
   const handleDeleteReminder = (id: bigint) => {
     writeContract({
-      address: REMINDR_ADDRESS,
+      address: contractAddress,
       abi: REMINDR_ABI,
       functionName: "deleteReminder",
       args: [id],
@@ -1111,3 +1113,4 @@ function EnhancedReminderCard({
     </motion.div>
   );
 }
+  const contractAddress = getContractAddress(chainId);

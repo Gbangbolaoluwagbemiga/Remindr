@@ -5,7 +5,17 @@ export const REMINDR_ABI = remindrAbi as any;
 
 // Contract address on Base Mainnet (Updated with new enhanced contract)
 export const REMINDR_ADDRESS =
-  "0xdB80F03692e45dd0be64E54FBD3d824Fdb64e9f7" as const;
+  "0x548C8df576bC2279395c22b3b84bb86b46862094" as const;
+
+export const REMINDR_ADDRESSES: Record<number, `0x${string}`> = {
+  8453: "0xdB80F03692e45dd0be64E54FBD3d824Fdb64e9f7", // Base Mainnet
+  42220: "0x548C8df576bC2279395c22b3b84bb86b46862094", // Celo Mainnet
+};
+
+export const getContractAddress = (chainId?: number): `0x${string}` => {
+  if (chainId && REMINDR_ADDRESSES[chainId]) return REMINDR_ADDRESSES[chainId];
+  return REMINDR_ADDRESS;
+};
 
 // Enums matching the contract
 export enum RecurrenceType {
@@ -187,5 +197,23 @@ export const base = {
   },
   blockExplorers: {
     default: { name: "BaseScan", url: "https://basescan.org" },
+  },
+} as const;
+
+export const celo = {
+  id: 42220,
+  name: "Celo",
+  network: "celo",
+  nativeCurrency: {
+    decimals: 18,
+    name: "Celo",
+    symbol: "CELO",
+  },
+  rpcUrls: {
+    public: { http: ["https://forno.celo.org"] },
+    default: { http: ["https://forno.celo.org"] },
+  },
+  blockExplorers: {
+    default: { name: "Celoscan", url: "https://celoscan.io" },
   },
 } as const;
