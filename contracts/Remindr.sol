@@ -253,7 +253,8 @@ contract Remindr {
             category: _category,
             priority: _priority,
             tags: _tags,
-            templateId: _templateId
+            templateId: _templateId,
+            snoozeCount: 0
         });
         
         userReminders[msg.sender].push(newId);
@@ -440,7 +441,7 @@ contract Remindr {
     }
     function batchCompleteReminders(uint256[] memory _ids) external {
         for (uint256 i = 0; i < _ids.length; i++) {
-            completeReminder(_ids[i]);
+            this.completeReminder(_ids[i]);
         }
     }
 
@@ -580,7 +581,8 @@ contract Remindr {
             category: original.category,
             priority: original.priority,
             tags: original.tags,
-            templateId: original.templateId
+            templateId: original.templateId,
+            snoozeCount: 0
         });
         
         // Add to owner's reminders
