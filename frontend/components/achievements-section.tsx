@@ -6,53 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Lock, Unlock, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
-import { format } from "date-fns";
 import { useChainId } from "wagmi";
-
-const ACHIEVEMENTS = [
-  {
-    id: 1,
-    name: "First Reminder",
-    description: "Created your first reminder!",
-    icon: "🎯",
-    color: "bg-blue-500",
-  },
-  {
-    id: 2,
-    name: "Getting Started",
-    description: "Created 10 reminders!",
-    icon: "🚀",
-    color: "bg-green-500",
-  },
-  {
-    id: 3,
-    name: "Reminder Master",
-    description: "Created 100 reminders!",
-    icon: "👑",
-    color: "bg-purple-500",
-  },
-  {
-    id: 4,
-    name: "Perfect Week",
-    description: "7 day streak!",
-    icon: "🔥",
-    color: "bg-orange-500",
-  },
-  {
-    id: 5,
-    name: "Completionist",
-    description: "Completed 50 reminders!",
-    icon: "✅",
-    color: "bg-emerald-500",
-  },
-  {
-    id: 6,
-    name: "Social Butterfly",
-    description: "Shared 10 reminders!",
-    icon: "🦋",
-    color: "bg-pink-500",
-  },
-];
+import { ACHIEVEMENTS } from "@/lib/constants";
 
 export function AchievementsSection() {
   const { address } = useAccount();

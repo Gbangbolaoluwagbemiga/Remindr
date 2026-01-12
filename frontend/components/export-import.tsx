@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Reminder } from "@/lib/contract";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,10 +13,7 @@ import {
 import { Download, Upload, FileJson, FileSpreadsheet } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
-
-interface ExportImportProps {
-  reminders: Reminder[];
-}
+import { ExportImportProps } from "@/lib/types";
 
 export function ExportImport({ reminders }: ExportImportProps) {
   const [isOpen, setIsOpen] = useState(false);

@@ -1,104 +1,64 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
-import { REMINDR_ABI, Reminder, getContractAddress } from "@/lib/contract";
+import { REMINDR_ABI, getContractAddress } from "@/lib/contract";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { RefreshCw, Zap, CheckCircle2 } from "lucide-react";
+import { RefreshCw, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { useChainId } from "wagmi";
+import { useUserReminders } from "@/hooks/useReminders";
+import { useContractWrite } from "@/hooks/useContractWrite";
+import { getRecurringRemindersReady } from "@/lib/reminder-utils";
+import { RECURRING_PROCESS_INTERVAL } from "@/lib/constants";
 
 export function RecurringProcessor() {
-  const { address } = useAccount();
   const chainId = useChainId();
   const contractAddress = getContractAddress(chainId);
-  const [isProcessing, setIsProcessing] = useState(false);
   const [lastProcessed, setLastProcessed] = useState<Date | null>(null);
 
-  const { data: reminders, refetch } = useReadContract({
-    address: contractAddress,
-    abi: REMINDR_ABI,
-    functionName: "getUserReminders",
-    args: address ? [address] : undefined,
-    query: {
-      enabled: !!address,
+  const { data: reminders, refetch } = useUserReminders();
+  
+  const { writeContract, isLoading } = useContractWrite({
+    onSuccess: () => {
+      setLastProcessed(new Date());
+      refetch();
     },
-  }) as { data: Reminder[] | undefined; refetch: () => void };
+    successMessage: "Recurring reminders processed! 🔄",
+  });
 
-  const { writeContract, data: hash, isPending } = useWriteContract();
-  const { isLoading: isConfirming, isSuccess: isConfirmed } =
-    useWaitForTransactionReceipt({
-      hash,
-    });
-
-  // Auto-process recurring reminders every 5 minutes
+  // Auto-process recurring reminders
   useEffect(() => {
-    if (!address || !reminders) return;
+    if (!reminders) return;
 
-    const processRecurring = async () => {
-      const now = Math.floor(Date.now() / 1000);
-      const recurringReminders = reminders.filter((r) => {
-        if (!r.exists || r.isCompleted) return false;
-        if (r.recurrenceType === 0) return false; // None
-        if (Number(r.nextOccurrence) <= now && Number(r.timestamp) <= now) {
-          return true;
-        }
-        return false;
-      });
-
-      if (recurringReminders.length > 0) {
-        const ids = recurringReminders.map((r) => r.id);
-        try {
-          writeContract({
-            address: contractAddress,
-            abi: REMINDR_ABI,
-            functionName: "processRecurringReminders",
-            args: [ids],
-          });
-        } catch (error) {
-          console.error("Error processing recurring reminders:", error);
-        }
+    const processRecurring = () => {
+      const readyReminders = getRecurringRemindersReady(reminders);
+      if (readyReminders.length > 0) {
+        const ids = readyReminders.map((r) => r.id);
+        writeContract({
+          address: contractAddress,
+          abi: REMINDR_ABI,
+          functionName: "processRecurringReminders",
+          args: [ids],
+        });
       }
     };
 
-    // Process immediately if there are recurring reminders
     processRecurring();
-
-    // Set up interval to check every 5 minutes
-    const interval = setInterval(processRecurring, 5 * 60 * 1000);
-
+    const interval = setInterval(processRecurring, RECURRING_PROCESS_INTERVAL);
     return () => clearInterval(interval);
-  }, [address, reminders, contractAddress, writeContract]);
-
-  useEffect(() => {
-    if (isConfirmed) {
-      toast.success("Recurring reminders processed! 🔄");
-      setLastProcessed(new Date());
-      refetch();
-    }
-  }, [isConfirmed, refetch]);
+  }, [reminders, contractAddress, writeContract]);
 
   const handleManualProcess = () => {
     if (!reminders) return;
 
-    const now = Math.floor(Date.now() / 1000);
-    const recurringReminders = reminders.filter((r) => {
-      if (!r.exists || r.isCompleted) return false;
-      if (r.recurrenceType === 0) return false; // None
-      if (Number(r.nextOccurrence) <= now && Number(r.timestamp) <= now) {
-        return true;
-      }
-      return false;
-    });
-
-    if (recurringReminders.length === 0) {
+    const readyReminders = getRecurringRemindersReady(reminders);
+    if (readyReminders.length === 0) {
       toast.info("No recurring reminders to process");
       return;
     }
 
-    setIsProcessing(true);
-    const ids = recurringReminders.map((r) => r.id);
+    const ids = readyReminders.map((r) => r.id);
     writeContract({
       address: contractAddress,
       abi: REMINDR_ABI,
@@ -107,12 +67,7 @@ export function RecurringProcessor() {
     });
   };
 
-  const recurringCount = reminders?.filter((r) => {
-    if (!r.exists || r.isCompleted) return false;
-    if (r.recurrenceType === 0) return false;
-    const now = Math.floor(Date.now() / 1000);
-    return Number(r.nextOccurrence) <= now && Number(r.timestamp) <= now;
-  }).length || 0;
+  const recurringCount = reminders ? getRecurringRemindersReady(reminders).length : 0;
 
   return (
     <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
@@ -135,7 +90,7 @@ export function RecurringProcessor() {
             <Button
               size="sm"
               onClick={handleManualProcess}
-              disabled={isPending || isConfirming || isProcessing}
+              disabled={isLoading}
             >
               <Zap className="w-4 h-4 mr-2" />
               Process Now
