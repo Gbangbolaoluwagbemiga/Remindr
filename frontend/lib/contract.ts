@@ -63,6 +63,7 @@ export interface Reminder {
   priority: ReminderPriority;
   tags: string[];
   templateId: bigint;
+  snoozeCount?: bigint;
 }
 
 export interface UserStats {
