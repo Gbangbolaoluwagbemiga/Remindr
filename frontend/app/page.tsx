@@ -893,19 +893,23 @@ export default function Home() {
                         <div className="space-y-3">
                           <AnimatePresence>
                             {overdueReminders.map((reminder) => (
-                              <EnhancedReminderCard
-                                key={reminder.id.toString()}
-                                reminder={reminder}
-                                onEdit={startEditing}
-                                onComplete={handleCompleteReminder}
-                                onDelete={handleDeleteReminder}
-                                onAddParticipant={handleAddParticipant}
-                                formatDate={formatDate}
-                                getTimeUntil={getTimeUntil}
-                                isPending={isPending || isConfirming}
-                                variant="overdue"
-                                currentAddress={address}
-                              />
+                              <div key={reminder.id.toString()}>
+                                <EnhancedReminderCard
+                                  reminder={reminder}
+                                  onEdit={startEditing}
+                                  onComplete={handleCompleteReminder}
+                                  onDelete={handleDeleteReminder}
+                                  onAddParticipant={handleAddParticipant}
+                                  formatDate={formatDate}
+                                  getTimeUntil={getTimeUntil}
+                                  isPending={isPending || isConfirming}
+                                  variant="overdue"
+                                  currentAddress={address}
+                                />
+                                <div className="mt-2">
+                                  <ReminderNotes reminder={reminder} />
+                                </div>
+                              </div>
                             ))}
                           </AnimatePresence>
                         </div>
