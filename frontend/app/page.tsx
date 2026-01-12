@@ -55,6 +55,7 @@ import {
   Tag,
   Eye,
   EyeOff,
+  Search,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useReminderNotifications } from "@/hooks/useReminderNotifications";
@@ -64,8 +65,17 @@ import { ReminderSkeletonList } from "@/components/reminder-skeleton";
 import { StatsSkeleton } from "@/components/stats-skeleton";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { SearchBar } from "@/components/search-bar";
+import { AchievementsSection } from "@/components/achievements-section";
+import { SnoozeDialog } from "@/components/snooze-dialog";
+import { CalendarView } from "@/components/calendar-view";
+import { Leaderboard } from "@/components/leaderboard";
+import { AnalyticsDashboard } from "@/components/analytics-dashboard";
+import { BatchOperations } from "@/components/batch-operations";
+import { ExportImport } from "@/components/export-import";
+import { AdvancedFilters } from "@/components/advanced-filters";
+import { ReminderInsights } from "@/components/reminder-insights";
 
-type ViewMode = "my" | "public" | "templates" | "stats";
+type ViewMode = "my" | "public" | "templates" | "stats" | "calendar" | "achievements" | "analytics" | "leaderboard";
 
 export default function Home() {
   const { address, isConnected } = useAccount();
@@ -92,6 +102,7 @@ export default function Home() {
   const [editingId, setEditingId] = useState<bigint | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filteredReminders, setFilteredReminders] = useState<Reminder[] | undefined>(undefined);
 
   // Read user reminders
   const { 
@@ -355,7 +366,7 @@ export default function Home() {
   const displayReminders = viewMode === "public" ? publicReminders : reminders;
   
   // Filter reminders by search query
-  const filteredReminders = displayReminders?.filter((r) => {
+  const searchFilteredReminders = displayReminders?.filter((r) => {
     if (!r.exists) return false;
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
@@ -366,8 +377,11 @@ export default function Home() {
     );
   }) || [];
   
-  const activeReminders = filteredReminders.filter((r) => !r.isCompleted);
-  const completedReminders = filteredReminders.filter((r) => r.isCompleted);
+  // Use filtered reminders if advanced filters are applied, otherwise use search filtered
+  const finalFilteredReminders = filteredReminders || searchFilteredReminders;
+  
+  const activeReminders = finalFilteredReminders.filter((r) => !r.isCompleted);
+  const completedReminders = finalFilteredReminders.filter((r) => r.isCompleted);
   const pendingReminders = activeReminders.filter((r) => !isPast(r.timestamp));
   const overdueReminders = activeReminders.filter((r) => isPast(r.timestamp));
 
@@ -524,7 +538,59 @@ export default function Home() {
                 <Trophy className="w-4 h-4 mr-2" />
                 Stats
               </Button>
+              <Button
+                variant={viewMode === "calendar" ? "default" : "outline"}
+                onClick={() => setViewMode("calendar")}
+                className={
+                  viewMode === "calendar"
+                    ? "bg-gradient-to-r from-purple-500 to-pink-500"
+                    : ""
+                }
+              >
+                <Calendar className="w-4 h-4 mr-2" />
+                Calendar
+              </Button>
+              <Button
+                variant={viewMode === "achievements" ? "default" : "outline"}
+                onClick={() => setViewMode("achievements")}
+                className={
+                  viewMode === "achievements"
+                    ? "bg-gradient-to-r from-purple-500 to-pink-500"
+                    : ""
+                }
+              >
+                <Trophy className="w-4 h-4 mr-2" />
+                Achievements
+              </Button>
+              <Button
+                variant={viewMode === "analytics" ? "default" : "outline"}
+                onClick={() => setViewMode("analytics")}
+                className={
+                  viewMode === "analytics"
+                    ? "bg-gradient-to-r from-purple-500 to-pink-500"
+                    : ""
+                }
+              >
+                <TrendingUp className="w-4 h-4 mr-2" />
+                Analytics
+              </Button>
             </motion.div>
+            
+            {/* Action Buttons */}
+            {viewMode === "my" && reminders && reminders.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex gap-2 mb-4 justify-center flex-wrap"
+              >
+                <BatchOperations reminders={reminders.filter((r) => r.exists)} onSuccess={refetch} />
+                <ExportImport reminders={reminders.filter((r) => r.exists)} />
+                <AdvancedFilters 
+                  reminders={reminders.filter((r) => r.exists)} 
+                  onFilterChange={setFilteredReminders}
+                />
+              </motion.div>
+            )}
 
             {/* User Stats Dashboard */}
             {viewMode === "stats" && isLoadingStats && (
@@ -546,49 +612,78 @@ export default function Home() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
+                className="space-y-6"
               >
-                <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
-                  <CardContent className="p-4">
-                    <p className="text-sm text-gray-600 dark:text-white/60">
-                      Created
-                    </p>
-                    <p className="text-3xl font-bold">
-                      {userStats.totalRemindersCreated.toString()}
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
-                  <CardContent className="p-4">
-                    <p className="text-sm text-gray-600 dark:text-white/60">
-                      Completed
-                    </p>
-                    <p className="text-3xl font-bold text-green-400">
-                      {userStats.totalRemindersCompleted.toString()}
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
-                  <CardContent className="p-4">
-                    <p className="text-sm text-gray-600 dark:text-white/60">
-                      Streak
-                    </p>
-                    <p className="text-3xl font-bold text-yellow-400">
-                      {userStats.streakDays.toString()} days
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
-                  <CardContent className="p-4">
-                    <p className="text-sm text-gray-600 dark:text-white/60">
-                      Reputation
-                    </p>
-                    <p className="text-3xl font-bold text-purple-400">
-                      {userStats.reputationScore.toString()}/1000
-                    </p>
-                  </CardContent>
-                </Card>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
+                    <CardContent className="p-4">
+                      <p className="text-sm text-gray-600 dark:text-white/60">
+                        Created
+                      </p>
+                      <p className="text-3xl font-bold">
+                        {userStats.totalRemindersCreated.toString()}
+                      </p>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
+                    <CardContent className="p-4">
+                      <p className="text-sm text-gray-600 dark:text-white/60">
+                        Completed
+                      </p>
+                      <p className="text-3xl font-bold text-green-400">
+                        {userStats.totalRemindersCompleted.toString()}
+                      </p>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
+                    <CardContent className="p-4">
+                      <p className="text-sm text-gray-600 dark:text-white/60">
+                        Streak
+                      </p>
+                      <p className="text-3xl font-bold text-yellow-400">
+                        {userStats.streakDays.toString()} days
+                      </p>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
+                    <CardContent className="p-4">
+                      <p className="text-sm text-gray-600 dark:text-white/60">
+                        Reputation
+                      </p>
+                      <p className="text-3xl font-bold text-purple-400">
+                        {userStats.reputationScore.toString()}/1000
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+                <ReminderInsights reminders={reminders} userStats={userStats} />
               </motion.div>
+            )}
+            
+            {/* Calendar View */}
+            {viewMode === "calendar" && reminders && (
+              <CalendarView 
+                reminders={reminders.filter((r) => r.exists)} 
+                onReminderClick={(reminder) => {
+                  startEditing(reminder);
+                  setViewMode("my");
+                }}
+              />
+            )}
+            
+            {/* Achievements View */}
+            {viewMode === "achievements" && (
+              <AchievementsSection />
+            )}
+            
+            {/* Analytics View */}
+            {viewMode === "analytics" && (
+              <AnalyticsDashboard reminders={reminders} userStats={userStats} />
+            )}
+            
+            {/* Leaderboard View */}
+            {viewMode === "leaderboard" && (
+              <Leaderboard />
             )}
 
             {/* Templates View */}
@@ -859,7 +954,7 @@ export default function Home() {
                       </div>
                     )}
 
-                    {searchQuery && filteredReminders.length === 0 && (
+                    {searchQuery && finalFilteredReminders.length === 0 && (
                       <Card className="bg-white/90 dark:bg-white/10 backdrop-blur-lg">
                         <CardContent className="p-12 text-center">
                           <Search className="w-16 h-16 text-gray-400 dark:text-white/40 mx-auto mb-4" />
@@ -867,12 +962,12 @@ export default function Home() {
                             No reminders found
                           </p>
                           <p className="text-gray-500 dark:text-white/40 text-sm mt-2">
-                            Try adjusting your search query
+                            Try adjusting your search query or filters
                           </p>
                         </CardContent>
                       </Card>
                     )}
-                    {!searchQuery && (!displayReminders ||
+                    {!searchQuery && !filteredReminders && (!displayReminders ||
                       displayReminders.filter((r) => r.exists).length ===
                         0) && (
                       <Card className="bg-white/90 dark:bg-white/10 backdrop-blur-lg">
@@ -1032,6 +1127,12 @@ function EnhancedReminderCard({
                     {reminder.participants.length > 1 ? "s" : ""}
                   </div>
                 )}
+                {reminder.snoozeCount > 0 && (
+                  <div className="flex items-center gap-1 text-orange-400">
+                    <Clock className="w-4 h-4" />
+                    Snoozed {reminder.snoozeCount} time{reminder.snoozeCount > 1 ? "s" : ""}
+                  </div>
+                )}
               </div>
               {isOwner && reminder.isShared && showParticipantInput && (
                 <div className="mt-3 flex gap-2">
@@ -1077,6 +1178,12 @@ function EnhancedReminderCard({
                     <Users className="w-4 h-4" />
                   </Button>
                 )}
+                <SnoozeDialog
+                  reminderId={reminder.id}
+                  currentSnoozeCount={reminder.snoozeCount}
+                  maxSnoozes={BigInt(5)}
+                  onSuccess={() => window.location.reload()}
+                />
                 <Button
                   size="sm"
                   variant="ghost"
