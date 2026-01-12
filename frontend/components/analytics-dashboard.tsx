@@ -1,16 +1,10 @@
 "use client";
 
-import { useAccount, useReadContract } from "wagmi";
-import { REMINDR_ABI, getContractAddress, Reminder, UserStats } from "@/lib/contract";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart3, TrendingUp, PieChart, Activity } from "lucide-react";
-import { useChainId } from "wagmi";
 import { useMemo } from "react";
-
-interface AnalyticsDashboardProps {
-  reminders: Reminder[] | undefined;
-  userStats: UserStats | undefined;
-}
+import { AnalyticsDashboardProps } from "@/lib/types";
+import { categorizeReminders } from "@/lib/reminder-utils";
 
 export function AnalyticsDashboard({ reminders, userStats }: AnalyticsDashboardProps) {
   const { address } = useAccount();
@@ -20,8 +14,7 @@ export function AnalyticsDashboard({ reminders, userStats }: AnalyticsDashboardP
   const analytics = useMemo(() => {
     if (!reminders || !userStats) return null;
 
-    const activeReminders = reminders.filter((r) => r.exists && !r.isCompleted);
-    const completedReminders = reminders.filter((r) => r.exists && r.isCompleted);
+    const { active: activeReminders, completed: completedReminders, overdue: overdueReminders } = categorizeReminders(reminders);
     
     // Category breakdown
     const categoryCounts: Record<number, number> = {};
@@ -44,11 +37,7 @@ export function AnalyticsDashboard({ reminders, userStats }: AnalyticsDashboardP
     const totalCompleted = Number(userStats.totalRemindersCompleted);
     const completionRate = totalCreated > 0 ? (totalCompleted / totalCreated) * 100 : 0;
 
-    // Overdue count
-    const now = Math.floor(Date.now() / 1000);
-    const overdueCount = activeReminders.filter(
-      (r) => Number(r.timestamp) < now
-    ).length;
+    const overdueCount = overdueReminders.length;
 
     return {
       categoryCounts,

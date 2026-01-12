@@ -1,15 +1,10 @@
 "use client";
 
 import { useMemo } from "react";
-import { Reminder, UserStats } from "@/lib/contract";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Lightbulb, TrendingUp, Calendar, Target } from "lucide-react";
 import { format, startOfWeek, endOfWeek, isWithinInterval } from "date-fns";
-
-interface ReminderInsightsProps {
-  reminders: Reminder[] | undefined;
-  userStats: UserStats | undefined;
-}
+import { ReminderInsightsProps } from "@/lib/types";
 
 export function ReminderInsights({ reminders, userStats }: ReminderInsightsProps) {
   const insights = useMemo(() => {

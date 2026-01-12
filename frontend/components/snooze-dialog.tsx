@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { useState } from "react";
 import { REMINDR_ABI, getContractAddress } from "@/lib/contract";
 import {
   Dialog,
@@ -15,37 +14,27 @@ import { Button } from "@/components/ui/button";
 import { Clock } from "lucide-react";
 import { toast } from "sonner";
 import { useChainId } from "wagmi";
-
-interface SnoozeDialogProps {
-  reminderId: bigint;
-  onSuccess?: () => void;
-  currentSnoozeCount?: bigint;
-  maxSnoozes?: bigint;
-}
-
-const SNOOZE_OPTIONS = [
-  { label: "5 minutes", seconds: 5 * 60 },
-  { label: "15 minutes", seconds: 15 * 60 },
-  { label: "1 hour", seconds: 60 * 60 },
-  { label: "3 hours", seconds: 3 * 60 * 60 },
-  { label: "1 day", seconds: 24 * 60 * 60 },
-  { label: "3 days", seconds: 3 * 24 * 60 * 60 },
-];
+import { useContractWrite } from "@/hooks/useContractWrite";
+import { SNOOZE_OPTIONS, MAX_SNOOZES } from "@/lib/constants";
+import { SnoozeDialogProps } from "@/lib/types";
 
 export function SnoozeDialog({
   reminderId,
   onSuccess,
   currentSnoozeCount = BigInt(0),
-  maxSnoozes = BigInt(5),
+  maxSnoozes = BigInt(MAX_SNOOZES),
 }: SnoozeDialogProps) {
   const [open, setOpen] = useState(false);
   const chainId = useChainId();
   const contractAddress = getContractAddress(chainId);
-  const { writeContract, data: hash, isPending } = useWriteContract();
-  const { isLoading: isConfirming, isSuccess: isConfirmed } =
-    useWaitForTransactionReceipt({
-      hash,
-    });
+  
+  const { writeContract, isLoading } = useContractWrite({
+    onSuccess: () => {
+      setOpen(false);
+      onSuccess?.();
+    },
+    successMessage: "Reminder snoozed! 🔔",
+  });
 
   const canSnooze = currentSnoozeCount < maxSnoozes;
 
@@ -62,14 +51,6 @@ export function SnoozeDialog({
       args: [reminderId, BigInt(seconds)],
     });
   };
-
-  useEffect(() => {
-    if (isConfirmed) {
-      toast.success("Reminder snoozed! 🔔");
-      setOpen(false);
-      onSuccess?.();
-    }
-  }, [isConfirmed, onSuccess]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -105,7 +86,7 @@ export function SnoozeDialog({
               key={option.seconds}
               variant="outline"
               onClick={() => handleSnooze(option.seconds)}
-              disabled={isPending || isConfirming || !canSnooze}
+              disabled={isLoading || !canSnooze}
               className="h-auto py-3 flex flex-col items-center gap-1"
             >
               <span className="font-semibold">{option.label}</span>

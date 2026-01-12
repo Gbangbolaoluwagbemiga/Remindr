@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
-import { REMINDR_ABI, getContractAddress, Reminder } from "@/lib/contract";
+import { REMINDR_ABI, getContractAddress } from "@/lib/contract";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -16,22 +15,23 @@ import {
 import { CheckSquare, Trash2, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { useChainId } from "wagmi";
-
-interface BatchOperationsProps {
-  reminders: Reminder[];
-  onSuccess?: () => void;
-}
+import { useContractWrite } from "@/hooks/useContractWrite";
+import { BatchOperationsProps } from "@/lib/types";
 
 export function BatchOperations({ reminders, onSuccess }: BatchOperationsProps) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isOpen, setIsOpen] = useState(false);
   const chainId = useChainId();
   const contractAddress = getContractAddress(chainId);
-  const { writeContract, data: hash, isPending } = useWriteContract();
-  const { isLoading: isConfirming, isSuccess: isConfirmed } =
-    useWaitForTransactionReceipt({
-      hash,
-    });
+  
+  const { writeContract, isLoading } = useContractWrite({
+    onSuccess: () => {
+      setSelectedIds(new Set());
+      setIsOpen(false);
+      onSuccess?.();
+    },
+    successMessage: `Successfully processed ${selectedIds.size} reminder(s)! 🎉`,
+  });
 
   const activeReminders = reminders.filter((r) => r.exists && !r.isCompleted);
 
@@ -87,12 +87,6 @@ export function BatchOperations({ reminders, onSuccess }: BatchOperationsProps) 
     });
   };
 
-  if (isConfirmed) {
-    toast.success(`Successfully processed ${selectedIds.size} reminder(s)! 🎉`);
-    setSelectedIds(new Set());
-    setIsOpen(false);
-    onSuccess?.();
-  }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -163,7 +157,7 @@ export function BatchOperations({ reminders, onSuccess }: BatchOperationsProps) 
           <div className="flex gap-2 pt-4 border-t">
             <Button
               onClick={handleBatchComplete}
-              disabled={selectedIds.size === 0 || isPending || isConfirming}
+              disabled={selectedIds.size === 0 || isLoading}
               className="flex-1"
             >
               <CheckCircle2 className="w-4 h-4 mr-2" />
@@ -172,7 +166,7 @@ export function BatchOperations({ reminders, onSuccess }: BatchOperationsProps) 
             <Button
               variant="destructive"
               onClick={handleBatchDelete}
-              disabled={selectedIds.size === 0 || isPending || isConfirming}
+              disabled={selectedIds.size === 0 || isLoading}
               className="flex-1"
             >
               <Trash2 className="w-4 h-4 mr-2" />

@@ -1,26 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Reminder } from "@/lib/contract";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { FileText, Plus, X, Clock } from "lucide-react";
 import { format } from "date-fns";
-
-interface ReminderNote {
-  id: string;
-  reminderId: string;
-  content: string;
-  createdAt: number;
-  type: "note" | "completion" | "edit";
-}
-
-interface ReminderNotesProps {
-  reminder: Reminder;
-  onNoteAdd?: (reminderId: string, note: string) => void;
-}
+import { ReminderNote, ReminderNotesProps } from "@/lib/types";
+import { STORAGE_KEYS } from "@/lib/constants";
 
 export function ReminderNotes({ reminder, onNoteAdd }: ReminderNotesProps) {
   const [notes, setNotes] = useState<ReminderNote[]>([]);
@@ -29,7 +17,7 @@ export function ReminderNotes({ reminder, onNoteAdd }: ReminderNotesProps) {
 
   // Load notes from localStorage
   useEffect(() => {
-    const stored = localStorage.getItem(`reminder-notes-${reminder.id}`);
+    const stored = localStorage.getItem(STORAGE_KEYS.REMINDER_NOTES(reminder.id.toString()));
     if (stored) {
       try {
         setNotes(JSON.parse(stored));
@@ -42,7 +30,10 @@ export function ReminderNotes({ reminder, onNoteAdd }: ReminderNotesProps) {
   // Save notes to localStorage
   useEffect(() => {
     if (notes.length > 0) {
-      localStorage.setItem(`reminder-notes-${reminder.id}`, JSON.stringify(notes));
+      localStorage.setItem(
+        STORAGE_KEYS.REMINDER_NOTES(reminder.id.toString()),
+        JSON.stringify(notes)
+      );
     }
   }, [notes, reminder.id]);
 

@@ -1,18 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Reminder } from "@/lib/contract";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from "lucide-react";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from "date-fns";
-import { getStoredTimezone, formatDateInTimezone } from "@/lib/timezone";
+import { getStoredTimezone } from "@/lib/timezone";
 import { motion } from "framer-motion";
-
-interface CalendarViewProps {
-  reminders: Reminder[];
-  onReminderClick?: (reminder: Reminder) => void;
-}
+import { CalendarViewProps } from "@/lib/types";
+import { getReminderColor } from "@/lib/reminder-utils";
 
 export function CalendarView({ reminders, onReminderClick }: CalendarViewProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -35,14 +31,6 @@ export function CalendarView({ reminders, onReminderClick }: CalendarViewProps) 
     });
   };
 
-  const getReminderColor = (reminder: Reminder) => {
-    const now = Date.now();
-    const reminderTime = Number(reminder.timestamp) * 1000;
-    if (reminderTime < now) return "bg-red-500";
-    if (reminder.priority === 2) return "bg-orange-500";
-    if (reminder.priority === 1) return "bg-yellow-500";
-    return "bg-blue-500";
-  };
 
   const goToPreviousMonth = () => {
     setCurrentDate(subMonths(currentDate, 1));

@@ -12,7 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Globe, Check } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { STORAGE_KEYS } from "@/lib/constants";
 
 export function TimezoneSelector() {
   const [selectedTimezone, setSelectedTimezone] = useState<string>("");
@@ -20,19 +20,19 @@ export function TimezoneSelector() {
 
   useEffect(() => {
     // Load from localStorage or use browser default
-    const saved = localStorage.getItem("remindr-timezone");
+    const saved = localStorage.getItem(STORAGE_KEYS.TIMEZONE);
     if (saved) {
       setSelectedTimezone(saved);
     } else {
       const browserTz = getUserTimezone();
       setSelectedTimezone(browserTz);
-      localStorage.setItem("remindr-timezone", browserTz);
+      localStorage.setItem(STORAGE_KEYS.TIMEZONE, browserTz);
     }
   }, []);
 
   const handleSelect = (timezone: string) => {
     setSelectedTimezone(timezone);
-    localStorage.setItem("remindr-timezone", timezone);
+    localStorage.setItem(STORAGE_KEYS.TIMEZONE, timezone);
     setIsOpen(false);
   };
 
@@ -90,7 +90,7 @@ export function TimezoneSelector() {
 
 export function getStoredTimezone(): string {
   if (typeof window !== "undefined") {
-    return localStorage.getItem("remindr-timezone") || getUserTimezone();
+    return localStorage.getItem(STORAGE_KEYS.TIMEZONE) || getUserTimezone();
   }
   return "UTC";
 }
