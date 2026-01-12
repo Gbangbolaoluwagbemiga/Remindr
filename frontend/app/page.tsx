@@ -74,6 +74,10 @@ import { BatchOperations } from "@/components/batch-operations";
 import { ExportImport } from "@/components/export-import";
 import { AdvancedFilters } from "@/components/advanced-filters";
 import { ReminderInsights } from "@/components/reminder-insights";
+import { TimezoneSelector, getStoredTimezone } from "@/components/timezone-selector";
+import { RecurringProcessor } from "@/components/recurring-processor";
+import { ReminderNotes } from "@/components/reminder-notes";
+import { formatDateInTimezone } from "@/lib/timezone";
 
 type ViewMode = "my" | "public" | "templates" | "stats" | "calendar" | "achievements" | "analytics" | "leaderboard";
 
@@ -343,10 +347,8 @@ export default function Home() {
   };
 
   const formatDate = (timestamp: bigint) => {
-    return format(
-      new Date(Number(timestamp) * 1000),
-      "MMM dd, yyyy 'at' HH:mm"
-    );
+    const timezone = getStoredTimezone();
+    return formatDateInTimezone(Number(timestamp), timezone, "full");
   };
 
   const getTimeUntil = (timestamp: bigint) => {
@@ -476,8 +478,20 @@ export default function Home() {
             >
               Manage
             </Button>
+            <TimezoneSelector />
           </motion.div>
         </motion.div>
+        
+        {/* Recurring Processor */}
+        {isConnected && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6"
+          >
+            <RecurringProcessor />
+          </motion.div>
+        )}
 
             {/* View Mode Tabs */}
             <motion.div
@@ -615,46 +629,46 @@ export default function Home() {
                 className="space-y-6"
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
-                    <CardContent className="p-4">
-                      <p className="text-sm text-gray-600 dark:text-white/60">
-                        Created
-                      </p>
-                      <p className="text-3xl font-bold">
-                        {userStats.totalRemindersCreated.toString()}
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
-                    <CardContent className="p-4">
-                      <p className="text-sm text-gray-600 dark:text-white/60">
-                        Completed
-                      </p>
-                      <p className="text-3xl font-bold text-green-400">
-                        {userStats.totalRemindersCompleted.toString()}
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
-                    <CardContent className="p-4">
-                      <p className="text-sm text-gray-600 dark:text-white/60">
-                        Streak
-                      </p>
-                      <p className="text-3xl font-bold text-yellow-400">
-                        {userStats.streakDays.toString()} days
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
-                    <CardContent className="p-4">
-                      <p className="text-sm text-gray-600 dark:text-white/60">
-                        Reputation
-                      </p>
-                      <p className="text-3xl font-bold text-purple-400">
-                        {userStats.reputationScore.toString()}/1000
-                      </p>
-                    </CardContent>
-                  </Card>
+                <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
+                  <CardContent className="p-4">
+                    <p className="text-sm text-gray-600 dark:text-white/60">
+                      Created
+                    </p>
+                    <p className="text-3xl font-bold">
+                      {userStats.totalRemindersCreated.toString()}
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
+                  <CardContent className="p-4">
+                    <p className="text-sm text-gray-600 dark:text-white/60">
+                      Completed
+                    </p>
+                    <p className="text-3xl font-bold text-green-400">
+                      {userStats.totalRemindersCompleted.toString()}
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
+                  <CardContent className="p-4">
+                    <p className="text-sm text-gray-600 dark:text-white/60">
+                      Streak
+                    </p>
+                    <p className="text-3xl font-bold text-yellow-400">
+                      {userStats.streakDays.toString()} days
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-white/80 dark:bg-white/10 backdrop-blur-lg">
+                  <CardContent className="p-4">
+                    <p className="text-sm text-gray-600 dark:text-white/60">
+                      Reputation
+                    </p>
+                    <p className="text-3xl font-bold text-purple-400">
+                      {userStats.reputationScore.toString()}/1000
+                    </p>
+                  </CardContent>
+                </Card>
                 </div>
                 <ReminderInsights reminders={reminders} userStats={userStats} />
               </motion.div>
@@ -907,19 +921,23 @@ export default function Home() {
                         <div className="space-y-3">
                           <AnimatePresence>
                             {pendingReminders.map((reminder) => (
-                              <EnhancedReminderCard
-                                key={reminder.id.toString()}
-                                reminder={reminder}
-                                onEdit={startEditing}
-                                onComplete={handleCompleteReminder}
-                                onDelete={handleDeleteReminder}
-                                onAddParticipant={handleAddParticipant}
-                                formatDate={formatDate}
-                                getTimeUntil={getTimeUntil}
-                                isPending={isPending || isConfirming}
-                                variant="pending"
-                                currentAddress={address}
-                              />
+                              <div key={reminder.id.toString()}>
+                                <EnhancedReminderCard
+                                  reminder={reminder}
+                                  onEdit={startEditing}
+                                  onComplete={handleCompleteReminder}
+                                  onDelete={handleDeleteReminder}
+                                  onAddParticipant={handleAddParticipant}
+                                  formatDate={formatDate}
+                                  getTimeUntil={getTimeUntil}
+                                  isPending={isPending || isConfirming}
+                                  variant="pending"
+                                  currentAddress={address}
+                                />
+                                <div className="mt-2">
+                                  <ReminderNotes reminder={reminder} />
+                                </div>
+                              </div>
                             ))}
                           </AnimatePresence>
                         </div>
@@ -935,19 +953,23 @@ export default function Home() {
                         <div className="space-y-3">
                           <AnimatePresence>
                             {completedReminders.map((reminder) => (
-                              <EnhancedReminderCard
-                                key={reminder.id.toString()}
-                                reminder={reminder}
-                                onEdit={startEditing}
-                                onComplete={handleCompleteReminder}
-                                onDelete={handleDeleteReminder}
-                                onAddParticipant={handleAddParticipant}
-                                formatDate={formatDate}
-                                getTimeUntil={getTimeUntil}
-                                isPending={isPending || isConfirming}
-                                variant="completed"
-                                currentAddress={address}
-                              />
+                              <div key={reminder.id.toString()}>
+                                <EnhancedReminderCard
+                                  reminder={reminder}
+                                  onEdit={startEditing}
+                                  onComplete={handleCompleteReminder}
+                                  onDelete={handleDeleteReminder}
+                                  onAddParticipant={handleAddParticipant}
+                                  formatDate={formatDate}
+                                  getTimeUntil={getTimeUntil}
+                                  isPending={isPending || isConfirming}
+                                  variant="completed"
+                                  currentAddress={address}
+                                />
+                                <div className="mt-2">
+                                  <ReminderNotes reminder={reminder} />
+                                </div>
+                              </div>
                             ))}
                           </AnimatePresence>
                         </div>
