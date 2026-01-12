@@ -83,7 +83,11 @@ The app now includes these additional view modes:
 7. `export-import.tsx` - Export/import functionality
 8. `advanced-filters.tsx` - Advanced filtering
 9. `reminder-insights.tsx` - Personalized insights
-10. `ui/checkbox.tsx` - Checkbox component
+10. `timezone-selector.tsx` - Timezone selection
+11. `recurring-processor.tsx` - Auto-process recurring reminders
+12. `reminder-notes.tsx` - Notes and history tracking
+13. `ui/checkbox.tsx` - Checkbox component
+14. `lib/timezone.ts` - Timezone utilities
 
 ## 🔧 Technical Improvements
 
@@ -100,13 +104,37 @@ The app now includes these additional view modes:
 - All features are fully integrated into the main page
 - All components follow the existing design system
 
-## 🎯 Next Steps (Optional Enhancements)
+### 10. **Timezone Support** 🌍
+- Timezone selector in header
+- Support for 12+ common timezones
+- Automatic browser timezone detection
+- Timezone-aware date formatting
+- Saved timezone preference in localStorage
+- All dates displayed in user's selected timezone
 
-1. **Timezone Support** - Better timezone handling
-2. **Recurring Reminder Automation** - Auto-process recurring reminders
-3. **Reminder Comments/Notes** - Add notes and history tracking
-4. **Server-side Notifications** - Email/SMS notifications
-5. **Mobile PWA** - Progressive Web App support
+### 11. **Recurring Reminder Automation** 🔄
+- Auto-process recurring reminders every 5 minutes
+- Manual "Process Now" button
+- Shows count of reminders ready to process
+- Visual indicator when processing
+- Last processed timestamp display
+
+### 12. **Reminder Comments/Notes** 📝
+- Add notes to any reminder
+- Notes stored locally (localStorage)
+- Track completion notes
+- Edit history tracking
+- Delete notes functionality
+- Notes displayed below each reminder card
+- Timestamp for each note
+
+## 🎯 Future Enhancements (Optional)
+
+1. **Server-side Notifications** - Email/SMS notifications
+2. **Mobile PWA** - Progressive Web App support
+3. **NFT Achievements** - Mint NFTs for achievements
+4. **Gasless Transactions** - Meta-transactions
+5. **Voice Commands** - Create reminders via voice
 
 ## 🚀 How to Use
 
@@ -118,5 +146,16 @@ The app now includes these additional view modes:
 6. **Export/Import**: Click "Export/Import" button to export or import reminders
 7. **Advanced Filters**: Click "Filters" button to apply multiple filter criteria
 8. **Insights**: View personalized insights in the Stats tab
+9. **Timezone**: Click the timezone button in header to select your timezone
+10. **Recurring Reminders**: Automatically processed every 5 minutes, or click "Process Now"
+11. **Notes**: Click "Add Note" on any reminder card to add notes and track history
 
 All features are now live and ready to use! 🎉
+
+## 📋 Installation Notes
+
+1. Install dependencies: `npm install` in the `frontend` directory
+2. The new dependency `@radix-ui/react-checkbox` has been added to package.json
+3. All components are fully integrated and ready to use
+4. Timezone preferences are saved in localStorage
+5. Notes are stored locally per reminder in localStorage

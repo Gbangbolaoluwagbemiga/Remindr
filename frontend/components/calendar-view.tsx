@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from "lucide-react";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from "date-fns";
+import { getStoredTimezone, formatDateInTimezone } from "@/lib/timezone";
 import { motion } from "framer-motion";
 
 interface CalendarViewProps {
@@ -24,10 +25,13 @@ export function CalendarView({ reminders, onReminderClick }: CalendarViewProps) 
   const emptyDays = Array(firstDayOfWeek).fill(null);
 
   const getRemindersForDay = (day: Date) => {
+    const timezone = getStoredTimezone();
     return reminders.filter((r) => {
       if (!r.exists || r.isCompleted) return false;
+      // Convert timestamp to timezone-aware date
       const reminderDate = new Date(Number(r.timestamp) * 1000);
-      return isSameDay(reminderDate, day);
+      const tzDate = new Date(reminderDate.toLocaleString("en-US", { timeZone: timezone }));
+      return isSameDay(tzDate, day);
     });
   };
 
